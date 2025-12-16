@@ -1,0 +1,22 @@
+{
+  "name": "CDLS Catalogue Service",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-azurefunctions",
+        "ms-vscode.azurecli",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+  "forwardPorts": [7071],
+  "postCreateCommand": "npm install",
+  "remoteUser": "node"
+}
