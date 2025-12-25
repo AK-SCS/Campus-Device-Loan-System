@@ -93,12 +93,20 @@ cd cdls-catalogue-svc
 npm install
 npm run build
 
-# Step 8: Deploy to Azure
+# Step 8: Configure CORS
 echo ""
-echo "Step 8: Deploying code to Azure..."
+echo "Step 8: Configuring CORS..."
+az functionapp cors add \
+  --name "${FUNC_NAME}" \
+  --resource-group "${RG_NAME}" \
+  --allowed-origins "http://localhost:5500" "http://localhost:8080" "http://127.0.0.1:5500" "http://127.0.0.1:8080" || true
+
+# Step 9: Deploy to Azure
+echo ""
+echo "Step 9: Deploying code to Azure..."
 func azure functionapp publish "${FUNC_NAME}"
 
-# Step 9: Get the Function URL
+# Step 10: Get the Function URL
 echo ""
 echo "=================================================="
 echo "✅ Deployment Complete!"

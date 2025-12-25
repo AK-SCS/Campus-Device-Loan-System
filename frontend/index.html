@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Device Loan System - Catalogue</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .api-input {
+            flex: 1;
+            min-width: 300px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .api-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        select {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .status {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .status.loading {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+
+        .status.success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .device-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .device-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .device-category {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .category-Laptop {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .category-Tablet {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .category-Camera {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .category-Mouse,
+        .category-Monitor,
+        .category-Headset,
+        .category-Power.Bank {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .device-brand {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .device-model {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .device-availability {
+            font-size: 1.2em;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .available-count {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .available-count.low {
+            color: #ffc107;
+        }
+
+        .available-count.none {
+            color: #dc3545;
+        }
+
+        .stats {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📱 Campus Device Loan System</h1>
+            <p class="subtitle">Browse available devices for loan</p>
+        </header>
+
+        <div class="controls">
+            <input 
+                type="text" 
+                id="apiUrl" 
+                class="api-input" 
+                placeholder="Enter API URL (e.g., https://your-function-app.azurewebsites.net/api/GetDevices)"
+                value="">
+            <button id="loadBtn" onclick="loadDevices()">Load Devices</button>
+            <div class="filter-section">
+                <label for="categoryFilter">Filter:</label>
+                <select id="categoryFilter" onchange="filterDevices()">
+                    <option value="all">All Categories</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="status" class="status hidden"></div>
+
+        <div id="stats" class="stats hidden"></div>
+
+        <div id="devicesContainer" class="devices-grid"></div>
+
+        <footer>
+            <p>Campus Device Loan System - Cloud Native Application</p>
+            <p>Built with Azure Functions, Cosmos DB, and Azure Storage</p>
+        </footer>
+    </div>
+
+    <script>
+        let allDevices = [];
+        let categories = new Set();
+
+        // Try to load API URL from localStorage
+        window.onload = function() {
+            const savedUrl = localStorage.getItem('apiUrl');
+            if (savedUrl) {
+                document.getElementById('apiUrl').value = savedUrl;
+                loadDevices();
+            }
+        };
+
+        async function loadDevices() {
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            
+            if (!apiUrl) {
+                showStatus('Please enter an API URL', 'error');
+                return;
+            }
+
+            // Save URL to localStorage
+            localStorage.setItem('apiUrl', apiUrl);
+
+            showStatus('Loading devices...', 'loading');
+            document.getElementById('loadBtn').disabled = true;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                allDevices = await response.json();
+                
+                if (!Array.isArray(allDevices)) {
+                    throw new Error('Invalid response format: expected an array');
+                }
+
+                // Extract categories
+                categories.clear();
+                categories.add('all');
+                allDevices.forEach(device => {
+                    if (device.category) {
+                        categories.add(device.category);
+                    }
+                });
+
+                updateCategoryFilter();
+                displayStats();
+                displayDevices(allDevices);
+                showStatus(`Successfully loaded ${allDevices.length} devices`, 'success');
+
+            } catch (error) {
+                console.error('Error loading devices:', error);
+                showStatus(`Error: ${error.message}`, 'error');
+                document.getElementById('devicesContainer').innerHTML = '';
+            } finally {
+                document.getElementById('loadBtn').disabled = false;
+            }
+        }
+
+        function updateCategoryFilter() {
+            const select = document.getElementById('categoryFilter');
+            select.innerHTML = '<option value="all">All Categories</option>';
+            
+            Array.from(categories)
+                .filter(cat => cat !== 'all')
+                .sort()
+                .forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    select.appendChild(option);
+                });
+        }
+
+        function filterDevices() {
+            const selectedCategory = document.getElementById('categoryFilter').value;
+            
+            if (selectedCategory === 'all') {
+                displayDevices(allDevices);
+            } else {
+                const filtered = allDevices.filter(device => device.category === selectedCategory);
+                displayDevices(filtered);
+            }
+        }
+
+        function displayStats() {
+            const total = allDevices.length;
+            const totalAvailable = allDevices.reduce((sum, device) => sum + (device.available || 0), 0);
+            const categoriesCount = categories.size - 1; // Exclude 'all'
+
+            const statsHtml = `
+                <div class="stat-item">
+                    <div class="stat-value">${total}</div>
+                    <div class="stat-label">Device Models</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${totalAvailable}</div>
+                    <div class="stat-label">Units Available</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${categoriesCount}</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+            `;
+
+            document.getElementById('stats').innerHTML = statsHtml;
+            document.getElementById('stats').classList.remove('hidden');
+        }
+
+        function displayDevices(devices) {
+            const container = document.getElementById('devicesContainer');
+
+            if (devices.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: white; font-size: 1.2em;">No devices found</p>';
+                return;
+            }
+
+            container.innerHTML = devices.map(device => {
+                const availabilityClass = device.available > 5 ? '' : 
+                                        device.available > 0 ? 'low' : 'none';
+                const availabilityText = device.available > 0 ? 
+                                        `${device.available} available` : 
+                                        'Out of stock';
+
+                return `
+                    <div class="device-card">
+                        <span class="device-category category-${device.category.replace(/\s+/g, '.')}">${device.category}</span>
+                        <div class="device-brand">${device.brand}</div>
+                        <div class="device-model">${device.model}</div>
+                        <div class="device-availability">
+                            <span class="available-count ${availabilityClass}">${availabilityText}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.classList.remove('hidden');
+
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusDiv.classList.add('hidden');
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>

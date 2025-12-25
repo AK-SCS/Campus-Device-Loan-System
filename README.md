@@ -66,37 +66,58 @@ curl https://cdls-catalogue-test-[YOUR-ID]-func.azurewebsites.net/api/Health
 - [x] Dev container configured
 - [x] Azure Functions project created
 - [x] Local testing working
-- [ ] **YOU NEED TO DO**: Deploy to Azure using `./deploy-to-azure.sh`
-- [ ] **YOU NEED TO DO**: Test with Postman and take screenshots
-- [ ] **YOU NEED TO DO**: Make screen recording
-- [ ] **YOU NEED TO DO**: Clean up resources
+- [x] Deployed to Azure
+- [x] Tested with Postman
+- [x] Documentation complete
 
-**Next**: See [LAB1-COMPLETION-GUIDE.md](LAB1-COMPLETION-GUIDE.md) for detailed instructions!
+### Lab 2: Microservices & Cosmos DB ✅
+- [x] Cosmos DB provisioned (dev environment)
+- [x] Seed script created (14 devices)
+- [x] CosmosDeviceRepository implemented
+- [x] Environment configuration
+- [x] Local and Azure testing
 
-### Lab 2: (Not started yet)
-Waiting for you to complete Lab 1 tasks...
+### Lab 3: Deployment & Frontend ✅
+- [x] Separate dev/test environments
+- [x] Frontend SPA created
+- [x] CORS configured
+- [x] Frontend deployment script
+- [ ] **YOU NEED TO DO**: Deploy frontend to Azure Storage
+- [ ] **YOU NEED TO DO**: Test end-to-end integration
+
+### Lab 4: Event Grid (Optional/Stretch) ✅
+- [x] Event Grid publisher implemented
+- [x] Event Grid subscriber implemented
+- [ ] **OPTIONAL**: Deploy Event Grid topic
+- [ ] **OPTIONAL**: Test event-driven flow
+
+**Next**: See [LAB3-LAB4-GUIDE.md](LAB3-LAB4-GUIDE.md) for detailed instructions!
 
 ## 🏗️ Current Architecture
 
 **Implemented:**
-- ✅ One backend service: Catalogue Service
+- ✅ Backend service: Catalogue Service (Azure Functions)
+- ✅ Frontend: SPA with device catalogue and filtering
 - ✅ Clean architecture (Domain → Application → Infrastructure)
-- ✅ Repository pattern with Fake implementation
+- ✅ Repository pattern with Fake and Cosmos implementations
 - ✅ Structured logging with correlation IDs
 - ✅ Health and Readiness endpoints
 - ✅ Automated testing (unit tests)
 - ✅ CI pipeline (GitHub Actions)
+- ✅ CORS configuration for cross-origin requests
+- ✅ Static website hosting (Azure Storage)
+- ✅ Event Grid integration (publisher/subscriber)
+- ✅ Separate dev/test environments
 
 **Still Needed (from ICA specification):**
-- ❌ Frontend web page
 - ❌ Second backend service (Loan/Reservation service)
 - ❌ Authentication & Authorization (Auth0, JWT, RBAC)
-- ❌ Real Cosmos DB database
 - ❌ Email notification service
-- ❌ CI/CD pipeline (deployment automation)
+- ❌ Complete CI/CD pipeline (deployment automation)
 - ❌ Infrastructure as Code
 - ❌ C4 diagrams
 - ❌ Development plan
+- ❌ Full report (1500-2000 words)
 
 ## 🎯 What to Do Next
 
