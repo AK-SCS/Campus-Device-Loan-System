@@ -74,6 +74,20 @@ export class CosmosDeviceRepo implements DeviceRepo {
     return resources.map((doc) => this.mapToDomain(doc));
   }
 
+  async update(device: Device): Promise<Device> {
+    const doc: CosmosDeviceDocument = {
+      id: device.id,
+      brand: device.brand,
+      model: device.model,
+      category: device.category,
+      totalCount: device.totalCount,
+      availableCount: device.availableCount,
+    };
+
+    const { resource } = await this.container.item(device.id, device.id).replace(doc);
+    return this.mapToDomain(resource!);
+  }
+
   private mapToDomain(doc: CosmosDeviceDocument): Device {
     return {
       id: doc.id,
