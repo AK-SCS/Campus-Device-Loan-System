@@ -40,3 +40,5 @@ Set environment variables in `local.settings.json`:
 - `COSMOS_KEY`
 - `COSMOS_DATABASE`
 - `COSMOS_CONTAINER`
+
+<!-- CI/CD Test 15:43:48 -->
