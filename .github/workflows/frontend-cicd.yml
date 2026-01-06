@@ -74,13 +74,11 @@ jobs:
       - name: Deploy to Azure Storage Static Website
         env:
           AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-        uses: azure/CLI@v2
-        with:
-          inlineScript: |
-            az storage blob upload-batch \
-              --destination '$web' \
-              --source dist \
-              --overwrite true
+        run: |
+          az storage blob upload-batch \
+            --destination '$web' \
+            --source dist \
+            --overwrite true
 
   deploy-to-production:
     needs: build
@@ -97,10 +95,8 @@ jobs:
       - name: Deploy to Azure Storage Static Website (Production)
         env:
           AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-        uses: azure/CLI@v2
-        with:
-          inlineScript: |
-            az storage blob upload-batch \
-              --destination '$web' \
-              --source dist \
-              --overwrite true
+        run: |
+          az storage blob upload-batch \
+            --destination '$web' \
+            --source dist \
+            --overwrite true
