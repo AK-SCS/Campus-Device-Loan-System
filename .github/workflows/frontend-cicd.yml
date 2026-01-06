@@ -72,10 +72,10 @@ jobs:
           path: dist
 
       - name: Deploy to Azure Storage Static Website
-        env:
-          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
         run: |
           az storage blob upload-batch \
+            --account-name campusdeviceapp \
+            --account-key '${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}' \
             --destination '$web' \
             --source dist \
             --overwrite true
@@ -93,10 +93,10 @@ jobs:
           path: dist
 
       - name: Deploy to Azure Storage Static Website (Production)
-        env:
-          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
         run: |
           az storage blob upload-batch \
+            --account-name campusdeviceapp \
+            --account-key '${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}' \
             --destination '$web' \
             --source dist \
             --overwrite true
