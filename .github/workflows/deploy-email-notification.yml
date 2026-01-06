@@ -1,0 +1,126 @@
+name: Deploy - Email Notification Service
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'email-notification-service/**'
+      - '.github/workflows/deploy-email-notification.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'test'
+        type: choice
+        options:
+          - test
+          - staging
+          - production
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: email-notification-service/package-lock.json
+        
+    - name: Install dependencies
+      run: npm ci
+      working-directory: ./email-notification-service
+      
+    - name: Build
+      run: npm run build
+      working-directory: ./email-notification-service
+      
+    - name: Create deployment package
+      run: |
+        cp package.json dist/
+        cp package-lock.json dist/
+        cp host.json dist/
+        cd dist
+        npm ci --omit=dev
+      working-directory: ./email-notification-service
+      
+    - name: Upload deployment package
+      uses: actions/upload-artifact@v4
+      with:
+        name: email-notification-package
+        path: email-notification-service/dist
+        retention-days: 1
+
+  deploy-test:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: test
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'test') }}
+    
+    steps:
+    - name: Download deployment package
+      uses: actions/download-artifact@v4
+      with:
+        name: email-notification-package
+        path: ./package
+        
+    - name: Deploy to Azure Functions
+      uses: Azure/functions-action@v1
+      with:
+        app-name: 'campus-email-notification'
+        package: './package'
+        publish-profile: ${{ secrets.AZURE_EMAIL_NOTIFICATION_PUBLISH_PROFILE }}
+
+  deploy-staging:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging' }}
+    
+    steps:
+    - name: Download deployment package
+      uses: actions/download-artifact@v4
+      with:
+        name: email-notification-package
+        path: ./package
+        
+    - name: Login to Azure
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: Deploy to Azure Functions
+      uses: Azure/functions-action@v1
+      with:
+        app-name: 'campus-email-notification-staging'
+        package: './package'
+
+  deploy-production:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production' }}
+    
+    steps:
+    - name: Download deployment package
+      uses: actions/download-artifact@v4
+      with:
+        name: email-notification-package
+        path: ./package
+        
+    - name: Login to Azure
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: Deploy to Azure Functions
+      uses: Azure/functions-action@v1
+      with:
+        app-name: 'campus-email-notification-prod'
+        package: './package'

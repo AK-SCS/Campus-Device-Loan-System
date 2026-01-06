@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.base.schema.json",
+  "name": "DevOps Starter Kit",
+  "image": "ghcr.io/tpdavison/devops-labs:latest",
+  "features": {},
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-azurefunctions",
+        "ms-azuretools.vscode-azureresourcegroups",
+        "ms-azuretools.vscode-azuretools",
+        "ms-vscode-remote.remote-containers"
+      ]
+    }
+  }
+}

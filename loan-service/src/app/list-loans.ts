@@ -1,0 +1,46 @@
+/**
+ * List Loans Use Case
+ * 
+ * Retrieves loans with optional filtering by user, device, or status.
+ */
+
+import { Loan, LoanStatus, checkAndUpdateOverdue } from '../domain/loan.js';
+import { LoanRepo } from '../domain/loan-repo.js';
+
+export interface ListLoansDeps {
+  loanRepo: LoanRepo;
+}
+
+export interface ListLoansInput {
+  userId?: string; // Optional: filter by user
+  deviceId?: string; // Optional: filter by device
+  status?: LoanStatus; // Optional: filter by status
+}
+
+export async function listLoans(
+  deps: ListLoansDeps,
+  input?: ListLoansInput
+): Promise<Loan[]> {
+  const { loanRepo } = deps;
+
+  let loans: Loan[];
+
+  // Get loans based on filters
+  if (input?.userId) {
+    loans = await loanRepo.getByUserId(input.userId);
+  } else if (input?.deviceId) {
+    loans = await loanRepo.getByDeviceId(input.deviceId);
+  } else {
+    loans = await loanRepo.list();
+  }
+
+  // Update overdue status for all loans
+  loans = loans.map(loan => checkAndUpdateOverdue(loan));
+
+  // Filter by status if specified
+  if (input?.status) {
+    loans = loans.filter(loan => loan.status === input.status);
+  }
+
+  return loans;
+}
