@@ -61,10 +61,10 @@ jobs:
           cp package-lock.json package/
           
           # copy compiled JS
-          cp -r dist package/dist
+          cp -r dist package/
           
           # install runtime dependencies only (no devDeps) into the package
-          npm ci --omit=dev --prefix package
+          cd package && npm ci --omit=dev
         working-directory: ./email-notification-service
 
       - name: Save package temporarily for deployment
