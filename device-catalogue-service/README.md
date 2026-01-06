@@ -2,6 +2,8 @@
 
 This service manages the catalog of devices available for loan.
 
+**CI/CD Status:** Testing automated deployment
+
 ## Features
 - Browse available devices
 - View device details
