@@ -35,11 +35,9 @@ jobs:
         working-directory: ./frontend-react
 
       - name: Deploy to Azure Storage Static Website
-        env:
-          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
         run: |
           az storage blob upload-batch \
-            --account-name campusdeviceapp \
+            --connection-string '${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}' \
             --destination '$web' \
             --source frontend-react/dist \
             --overwrite true
