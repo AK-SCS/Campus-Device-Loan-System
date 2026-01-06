@@ -35,14 +35,11 @@ jobs:
         working-directory: ./frontend-react
 
       - name: Deploy to Azure Storage Static Website
-        uses: azure/CLI@v2
-        with:
-          azcliversion: latest
-          inlineScript: |
-            az storage blob upload-batch \
-              --account-name campusdeviceapp \
-              --auth-mode key \
-              --connection-string '${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}' \
-              --destination '$web' \
-              --source frontend-react/dist \
-              --overwrite true
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+        run: |
+          az storage blob upload-batch \
+            --account-name campusdeviceapp \
+            --destination '$web' \
+            --source frontend-react/dist \
+            --overwrite true
