@@ -11,10 +11,11 @@ export async function healthCheck(request: HttpRequest, context: InvocationConte
   const health = {
     service: 'Email Notification Service',
     status: 'healthy',
-    version: '1.0.0',
+    version: '1.1.0',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
-    usingSendGrid: process.env.USE_SENDGRID === 'true'
+    usingSendGrid: process.env.USE_SENDGRID === 'true',
+    deployment: 'CI/CD automated'
   };
 
   return {

@@ -11,11 +11,12 @@ export async function healthCheck(request: HttpRequest, context: InvocationConte
   const health = {
     service: 'Loan Service',
     status: 'healthy',
-    version: '1.0.0',
+    version: '1.1.0',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
     usingCosmosDB: process.env.USE_AZURE === 'true' || process.env.NODE_ENV === 'production',
-    usingEventGrid: process.env.USE_EVENT_GRID === 'true'
+    usingEventGrid: process.env.USE_EVENT_GRID === 'true',
+    deployment: 'CI/CD automated'
   };
 
   return {
