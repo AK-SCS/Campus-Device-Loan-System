@@ -11,10 +11,11 @@ export async function healthCheck(request: HttpRequest, context: InvocationConte
   const health = {
     service: 'Device Catalogue Service',
     status: 'healthy',
-    version: '1.0.0',
+    version: '1.0.1',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
-    usingCosmosDB: process.env.USE_AZURE === 'true' || process.env.NODE_ENV === 'production'
+    usingCosmosDB: process.env.USE_AZURE === 'true' || process.env.NODE_ENV === 'production',
+    cicdTest: 'Updated publish profiles - testing deployment'
   };
 
   return {
