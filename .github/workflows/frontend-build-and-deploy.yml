@@ -36,12 +36,13 @@ jobs:
 
       - name: Deploy to Azure Storage Static Website
         uses: azure/CLI@v2
-        env:
-          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
         with:
+          azcliversion: latest
           inlineScript: |
             az storage blob upload-batch \
-              --connection-string "$AZURE_STORAGE_CONNECTION_STRING" \
+              --account-name campusdeviceapp \
+              --auth-mode key \
+              --connection-string '${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}' \
               --destination '$web' \
               --source frontend-react/dist \
               --overwrite true
