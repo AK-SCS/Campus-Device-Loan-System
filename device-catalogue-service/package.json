@@ -1,6 +1,6 @@
 {
   "name": "device-catalogue-service",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Device Catalogue Service for Campus Device Loan System",
   "main": "dist/src/functions/*.js",
   "scripts": {
