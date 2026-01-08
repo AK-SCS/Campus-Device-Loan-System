@@ -1,16 +1,16 @@
-name: Device Catalogue - Build
+name: Email Notification - Build
 
 on:
   push:
     branches: [main]
     paths:
-      - 'device-catalogue-service/**'
-      - '.github/workflows/device-catalogue-build.yml'
+      - 'email-notification-service/**'
+      - '.github/workflows/email-notification-build.yml'
   pull_request:
     branches: [main]
     paths:
-      - 'device-catalogue-service/**'
-      - '.github/workflows/device-catalogue-build.yml'
+      - 'email-notification-service/**'
+      - '.github/workflows/email-notification-build.yml'
   workflow_dispatch:
 
 permissions:
@@ -22,7 +22,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./device-catalogue-service
+        working-directory: ./email-notification-service
 
     steps:
       - name: Checkout
@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: device-catalogue-service/package-lock.json
+          cache-dependency-path: email-notification-service/package-lock.json
 
       - name: Install dependencies
         run: npm ci

@@ -1,16 +1,16 @@
-name: Device Catalogue - Build and Deploy to Test
+name: Loan Service - Build and Deploy to Test
 
 on:
   push:
     branches: [main]
     paths:
-      - 'device-catalogue-service/**'
-      - '.github/workflows/device-catalogue-build-and-deploy.yml'
+      - 'loan-service/**'
+      - '.github/workflows/loan-service-build-and-deploy.yml'
   pull_request:
     branches: [main]
     paths:
-      - 'device-catalogue-service/**'
-      - '.github/workflows/device-catalogue-build-and-deploy.yml'
+      - 'loan-service/**'
+      - '.github/workflows/loan-service-build-and-deploy.yml'
   workflow_dispatch:
 
 permissions:
@@ -22,7 +22,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./device-catalogue-service
+        working-directory: ./loan-service
 
     steps:
       - name: Checkout
@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: device-catalogue-service/package-lock.json
+          cache-dependency-path: loan-service/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -61,8 +61,8 @@ jobs:
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: device-catalogue-package
-          path: device-catalogue-service/package
+          name: loan-service-package
+          path: loan-service/package
 
   deploy-to-test:
     runs-on: ubuntu-latest
@@ -73,11 +73,11 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: device-catalogue-package
+          name: loan-service-package
 
       - name: Deploy to Azure Function App
         uses: Azure/functions-action@v1
         with:
-          app-name: campus-device-catalogue-NEW
+          app-name: campus-loan-service-NEW
           package: .
-          publish-profile: ${{ secrets.AZURE_DEVICE_CATALOGUE_PUBLISH_PROFILE }}
+          publish-profile: ${{ secrets.AZURE_LOAN_SERVICE_PUBLISH_PROFILE }}
