@@ -57,6 +57,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: github.event_name != 'pull_request'
+    environment:
+      name: test
+      url: https://campusfrontend01.z16.web.core.windows.net
 
     steps:
       - name: Download artifact from build job
@@ -71,6 +74,31 @@ jobs:
           inlineScript: |
             az storage blob upload-batch \
               --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" \
+              --destination '$web' \
+              --source dist \
+              --overwrite true
+
+  deploy-to-production:
+    runs-on: ubuntu-latest
+    needs: deploy-to-test
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    environment:
+      name: production
+      url: https://campusfrontendprod.z16.web.core.windows.net
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: dist
+
+      - name: Deploy to Azure Storage Static Website (Production)
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az storage blob upload-batch \
+              --connection-string "${{ secrets.AZURE_STORAGE_PROD_CONNECTION_STRING }}" \
               --destination '$web' \
               --source dist \
               --overwrite true
