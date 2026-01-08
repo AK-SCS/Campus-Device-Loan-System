@@ -621,22 +621,6 @@ function App() {
 
   return (
     <div className="app">
-      {/* Debug Info - Shows current user roles (only when authenticated) */}
-      {isAuthenticated && (
-        <div style={{
-          backgroundColor: '#fef3c7',
-          padding: '0.75rem',
-          borderBottom: '2px solid #f59e0b',
-          fontSize: '0.875rem'
-        }}>
-          <strong>🔍 DEBUG:</strong> User: {user?.email} | 
-          Role (app_metadata): {user?.['https://campus-device-loan-api/role'] || 'none'} | 
-          Roles: {JSON.stringify(user?.['https://campus-device-loan.com/roles'] || [])} | 
-          Has Staff: {hasRole('staff') ? '✅' : '❌'} | 
-          Has Admin: {hasRole('admin') ? '✅' : '❌'}
-        </div>
-      )}
-      
       {/* Header */}
       <header className="header">
         <h1>🎓 Campus Device Loan System</h1>
