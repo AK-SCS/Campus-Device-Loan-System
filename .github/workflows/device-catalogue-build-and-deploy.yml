@@ -73,7 +73,7 @@ jobs:
     if: github.event_name != 'pull_request'
     environment:
       name: test
-      url: https://campus-device-catalogue-NEW.azurewebsites.net
+      url: https://campus-device-catalogue.azurewebsites.net
 
     steps:
       - name: Download artifact from build job
@@ -95,7 +95,7 @@ jobs:
       - name: Deploy to Azure Function App
         uses: Azure/functions-action@v1
         with:
-          app-name: campus-device-catalogue-NEW
+          app-name: campus-device-catalogue
           package: .
           publish-profile: ${{ secrets.AZURE_DEVICE_CATALOGUE_PUBLISH_PROFILE }}
 
@@ -105,7 +105,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     environment:
       name: production
-      url: https://campus-device-catalogue-PROD.azurewebsites.net
+      url: https://campus-device-catalogue.azurewebsites.net
 
     steps:
       - name: Download artifact from build job
@@ -113,9 +113,9 @@ jobs:
         with:
           name: device-catalogue-package
 
-      - name: Deploy to Azure Function App (Production)
+      - name: Deploy to Azure Function App
         uses: Azure/functions-action@v1
         with:
-          app-name: campus-device-catalogue-PROD
+          app-name: campus-device-catalogue
           package: .
           publish-profile: ${{ secrets.AZURE_DEVICE_CATALOGUE_PROD_PUBLISH_PROFILE }}

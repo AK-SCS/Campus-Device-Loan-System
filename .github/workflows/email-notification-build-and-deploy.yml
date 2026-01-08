@@ -91,7 +91,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     environment:
       name: production
-      url: https://campus-email-notification-PROD.azurewebsites.net
+      url: https://campus-email-notification.azurewebsites.net
 
     steps:
       - name: Download artifact from build job
@@ -99,9 +99,9 @@ jobs:
         with:
           name: email-notification-package
 
-      - name: Deploy to Azure Function App (Production)
+      - name: Deploy to Azure Function App
         uses: Azure/functions-action@v1
         with:
-          app-name: campus-email-notification-PROD
+          app-name: campus-email-notification
           package: .
           publish-profile: ${{ secrets.AZURE_EMAIL_NOTIFICATION_PROD_PUBLISH_PROFILE }}
