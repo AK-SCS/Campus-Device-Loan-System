@@ -81,6 +81,17 @@ jobs:
         with:
           name: device-catalogue-package
 
+      - name: Check if publish profile secret exists
+        run: |
+          if [ -z "${{ secrets.AZURE_DEVICE_CATALOGUE_PUBLISH_PROFILE }}" ]; then
+            echo "ERROR: AZURE_DEVICE_CATALOGUE_PUBLISH_PROFILE secret is empty or not set"
+            exit 1
+          else
+            echo "Publish profile secret is set (length: ${#PUBLISH_PROFILE})"
+          fi
+        env:
+          PUBLISH_PROFILE: ${{ secrets.AZURE_DEVICE_CATALOGUE_PUBLISH_PROFILE }}
+
       - name: Deploy to Azure Function App
         uses: Azure/functions-action@v1
         with:
