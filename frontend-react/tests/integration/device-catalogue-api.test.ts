@@ -13,8 +13,6 @@ import { describe, it, expect, beforeAll } from 'vitest';
 const API_BASE_URL = process.env.VITE_API_BASE_URL || 'https://campus-device-catalogue.azurewebsites.net/api';
 
 describe('Device Catalogue API Integration Tests', () => {
-  let testDeviceId: string;
-
   beforeAll(() => {
     console.log(`Running integration tests against: ${API_BASE_URL}`);
   });
@@ -32,7 +30,6 @@ describe('Device Catalogue API Integration Tests', () => {
       
       if (devices.length > 0) {
         const device = devices[0];
-        testDeviceId = device.id;
         
         // Verify device structure
         expect(device).toHaveProperty('id');
@@ -97,7 +94,7 @@ describe('Device Catalogue API Integration Tests', () => {
       expect(Array.isArray(devices)).toBe(true);
       
       // All returned devices should be laptops
-      devices.forEach((device: any) => {
+      devices.forEach((device: { category: string }) => {
         expect(device.category.toLowerCase()).toBe('laptop');
       });
     });

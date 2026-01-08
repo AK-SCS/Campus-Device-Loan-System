@@ -69,7 +69,6 @@ jobs:
           path: dist
 
       - name: Deploy to Azure Storage Static Website
-        if: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING != '' }}
         uses: azure/CLI@v2
         with:
           azcliversion: latest
@@ -96,7 +95,6 @@ jobs:
           path: dist
 
       - name: Deploy to Azure Storage Static Website (Production)
-        if: ${{ secrets.AZURE_STORAGE_PROD_CONNECTION_STRING != '' }}
         uses: azure/CLI@v2
         with:
           azcliversion: latest
