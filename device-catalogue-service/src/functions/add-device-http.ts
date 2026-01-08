@@ -8,11 +8,14 @@ import { getCorsHeaders } from '../utils/cors.js';
 import { addDevice } from '../app/add-device.js';
 import { CreateDeviceInput } from '../domain/device.js';
 import { getDeviceRepo } from '../config/appServices.js';
+import { trackEvent, trackMetric } from '../infrastructure/telemetry.js';
 
 export async function addDeviceHttp(
   request: HttpRequest,
   context: InvocationContext
 ): Promise<HttpResponseInit> {
+  const startTime = Date.now();
+  
   // Handle OPTIONS preflight
   if (request.method === 'OPTIONS') {
     return {
@@ -43,6 +46,22 @@ export async function addDeviceHttp(
     // Add device
     const device = await addDevice(repo, body);
 
+    const duration = Date.now() - startTime;
+    
+    // Track successful device creation
+    trackEvent('DeviceCreated', {
+      deviceId: device.id,
+      brand: device.brand,
+      model: device.model,
+      category: device.category,
+      duration: duration.toString()
+    });
+    
+    trackMetric('DeviceOperationDuration', duration, { 
+      operation: 'create',
+      status: 'success'
+    });
+
     context.log(`Device added: ${device.id} - ${device.brand} ${device.model}`);
 
     return {
@@ -52,6 +71,19 @@ export async function addDeviceHttp(
     };
 
   } catch (error) {
+    const duration = Date.now() - startTime;
+    
+    // Track failed device creation
+    trackEvent('DeviceCreationFailure', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      duration: duration.toString()
+    });
+    
+    trackMetric('DeviceOperationDuration', duration, { 
+      operation: 'create',
+      status: 'failure'
+    });
+
     context.error('Error adding device:', error);
     
     // Return 400 for validation errors

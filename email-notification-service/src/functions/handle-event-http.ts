@@ -9,6 +9,7 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { sendNotification, type LoanEvent, type LoanEventType } from '../app/send-notification';
 import { getEmailSender } from '../config/appServices';
+import { trackEvent, trackMetric } from '../infrastructure/telemetry.js';
 
 /**
  * HTTP trigger function to handle loan events
@@ -149,11 +150,28 @@ export async function handleEventHttp(
 
     context.log(`Processing ${event.type} event for loan ${event.data.loanId}`);
 
+    const startTime = Date.now();
+    
     // Send the notification
     const emailSender = getEmailSender();
     const result = await sendNotification(event, { emailSender });
 
+    const duration = Date.now() - startTime;
+
     if (!result.success) {
+      // Track failed email
+      trackEvent('EmailNotificationFailure', {
+        eventType: event.type,
+        loanId: event.data.loanId,
+        error: result.error || 'Unknown error',
+        duration: duration.toString()
+      });
+      
+      trackMetric('EmailNotificationDuration', duration, { 
+        eventType: event.type,
+        status: 'failure'
+      });
+
       context.error(`Failed to send notification: ${result.error}`);
       return {
         status: 400,
@@ -163,6 +181,19 @@ export async function handleEventHttp(
         }
       };
     }
+
+    // Track successful email
+    trackEvent('EmailNotificationSuccess', {
+      eventType: event.type,
+      loanId: event.data.loanId,
+      emailSubject: result.emailSubject || 'Unknown',
+      duration: duration.toString()
+    });
+    
+    trackMetric('EmailNotificationDuration', duration, { 
+      eventType: event.type,
+      status: 'success'
+    });
 
     context.log(`Email notification sent successfully: "${result.emailSubject}"`);
 
@@ -179,6 +210,11 @@ export async function handleEventHttp(
 
   } catch (error) {
     context.error('Unexpected error handling event', error);
+    
+    // Track unexpected error
+    trackEvent('EmailNotificationError', {
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
     
     return {
       status: 500,

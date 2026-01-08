@@ -9,11 +9,13 @@ import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/fu
 import { getCorsHeaders } from '../utils/cors.js';
 import { returnDevice } from '../app/return-device';
 import { getLoanRepo, getEventPublisher, getDeviceClient, getWaitlistRepo, getNotificationRepo } from '../config/appServices';
+import { trackEvent, trackMetric } from '../infrastructure/telemetry.js';
 
 export async function returnDeviceHttp(
   request: HttpRequest,
   context: InvocationContext
 ): Promise<HttpResponseInit> {
+  const startTime = Date.now();
   context.log('HTTP trigger function processing request for return device');
 
   // Handle CORS preflight
@@ -50,6 +52,19 @@ export async function returnDeviceHttp(
       { loanId }
     );
 
+    const duration = Date.now() - startTime;
+    
+    // Track successful return
+    trackEvent('DeviceReturnSuccess', {
+      loanId,
+      duration: duration.toString()
+    });
+    
+    trackMetric('ReturnDuration', duration, { 
+      operation: 'return',
+      status: 'success'
+    });
+
     context.log(`Successfully returned device for loan: ${loanId}`);
 
     return {
@@ -62,6 +77,19 @@ export async function returnDeviceHttp(
     };
 
   } catch (error) {
+    const duration = Date.now() - startTime;
+    
+    // Track failed return
+    trackEvent('DeviceReturnFailure', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      duration: duration.toString()
+    });
+    
+    trackMetric('ReturnDuration', duration, { 
+      operation: 'return',
+      status: 'failure'
+    });
+
     context.error('Error returning device:', error);
 
     // Handle specific business logic errors

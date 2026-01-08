@@ -10,11 +10,13 @@ import { getCorsHeaders } from '../utils/cors.js';
 import { reserveDevice } from '../app/reserve-device';
 import { getLoanRepo, getDeviceClient, getEventPublisher } from '../config/appServices';
 import { validateToken, requireAuth } from '../auth/jwt-validator';
+import { trackEvent, trackMetric } from '../infrastructure/telemetry.js';
 
 export async function reserveDeviceHttp(
   request: HttpRequest,
   context: InvocationContext
 ): Promise<HttpResponseInit> {
+  const startTime = Date.now();
   context.log('HTTP trigger function processing request for reserve device');
 
   // Handle CORS preflight
@@ -95,6 +97,21 @@ export async function reserveDeviceHttp(
       { userId, deviceId }
     );
 
+    const duration = Date.now() - startTime;
+    
+    // Track successful reservation
+    trackEvent('DeviceReservationSuccess', {
+      userId,
+      deviceId,
+      loanId: result.loanId,
+      duration: duration.toString()
+    });
+    
+    trackMetric('ReservationDuration', duration, { 
+      operation: 'reserve',
+      status: 'success'
+    });
+
     context.log(`Successfully reserved device. Loan ID: ${result.loanId}`);
 
     return {
@@ -104,6 +121,19 @@ export async function reserveDeviceHttp(
     };
 
   } catch (error) {
+    const duration = Date.now() - startTime;
+    
+    // Track failed reservation
+    trackEvent('DeviceReservationFailure', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      duration: duration.toString()
+    });
+    
+    trackMetric('ReservationDuration', duration, { 
+      operation: 'reserve',
+      status: 'failure'
+    });
+
     context.error('Error reserving device:', error);
 
     // Handle specific business logic errors

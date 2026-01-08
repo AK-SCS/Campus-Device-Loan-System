@@ -7,11 +7,13 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getDeviceRepo } from '../config/appServices.js';
 import { getCorsHeaders } from '../utils/cors.js';
+import { trackEvent, trackMetric } from '../infrastructure/telemetry.js';
 
 export async function updateDeviceAvailability(
   request: HttpRequest,
   context: InvocationContext
 ): Promise<HttpResponseInit> {
+  const startTime = Date.now();
   context.log('Updating device availability');
 
   // Handle CORS preflight
@@ -68,6 +70,22 @@ export async function updateDeviceAvailability(
 
     await repo.save(updatedDevice);
 
+    const duration = Date.now() - startTime;
+    
+    // Track successful availability update
+    trackEvent('DeviceAvailabilityUpdated', {
+      deviceId,
+      previousCount: device.availableCount.toString(),
+      newCount: newAvailableCount.toString(),
+      decrementBy: decrementBy.toString(),
+      duration: duration.toString()
+    });
+    
+    trackMetric('AvailabilityUpdateDuration', duration, { 
+      operation: 'updateAvailability',
+      status: 'success'
+    });
+
     context.log(`Updated device ${deviceId}: available count ${device.availableCount} -> ${newAvailableCount}`);
 
     return {
@@ -80,6 +98,19 @@ export async function updateDeviceAvailability(
     };
 
   } catch (error: any) {
+    const duration = Date.now() - startTime;
+    
+    // Track failed availability update
+    trackEvent('DeviceAvailabilityUpdateFailure', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      duration: duration.toString()
+    });
+    
+    trackMetric('AvailabilityUpdateDuration', duration, { 
+      operation: 'updateAvailability',
+      status: 'failure'
+    });
+
     context.error('Error updating device availability:', error);
 
     return {
