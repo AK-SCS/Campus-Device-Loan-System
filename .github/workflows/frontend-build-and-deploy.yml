@@ -65,6 +65,17 @@ jobs:
           name: frontend-build
           path: dist
 
+      - name: Debug - Check if secret exists
+        run: |
+          if [ -z "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" ]; then
+            echo "ERROR: AZURE_STORAGE_CONNECTION_STRING secret is empty or not set"
+            exit 1
+          else
+            echo "Connection string secret exists (length: ${#CONN_STRING})"
+          fi
+        env:
+          CONN_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+
       - name: Deploy to Azure Storage Static Website
         uses: azure/CLI@v2
         env:
