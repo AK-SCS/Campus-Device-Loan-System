@@ -78,12 +78,16 @@ jobs:
 
       - name: Deploy to Azure Storage Static Website
         uses: azure/CLI@v2
-        env:
-          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
         with:
           azcliversion: latest
           inlineScript: |
+            # Extract account name and key from connection string
+            ACCOUNT_NAME=$(echo "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" | grep -oP 'AccountName=\K[^;]+')
+            ACCOUNT_KEY=$(echo "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" | grep -oP 'AccountKey=\K[^;]+')
+            
             az storage blob upload-batch \
+              --account-name "$ACCOUNT_NAME" \
+              --account-key "$ACCOUNT_KEY" \
               --destination '$web' \
               --source dist \
               --overwrite true
