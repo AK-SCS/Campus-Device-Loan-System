@@ -82,8 +82,19 @@ jobs:
           azcliversion: latest
           inlineScript: |
             # Extract account name and key from connection string
-            ACCOUNT_NAME=$(echo "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" | grep -oP 'AccountName=\K[^;]+')
-            ACCOUNT_KEY=$(echo "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" | grep -oP 'AccountKey=\K[^;]+')
+            CONN_STR="${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}"
+            echo "Connection string length: ${#CONN_STR}"
+            
+            ACCOUNT_NAME=$(echo "$CONN_STR" | grep -oP 'AccountName=\K[^;]+' || echo "")
+            ACCOUNT_KEY=$(echo "$CONN_STR" | grep -oP 'AccountKey=\K[^;]+' || echo "")
+            
+            echo "Account name: $ACCOUNT_NAME"
+            echo "Account key length: ${#ACCOUNT_KEY}"
+            
+            if [ -z "$ACCOUNT_NAME" ] || [ -z "$ACCOUNT_KEY" ]; then
+              echo "ERROR: Could not extract credentials from connection string"
+              exit 1
+            fi
             
             az storage blob upload-batch \
               --account-name "$ACCOUNT_NAME" \
