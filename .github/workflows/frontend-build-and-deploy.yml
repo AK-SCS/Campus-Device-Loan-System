@@ -67,11 +67,12 @@ jobs:
 
       - name: Deploy to Azure Storage Static Website
         uses: azure/CLI@v2
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
         with:
           azcliversion: latest
           inlineScript: |
             az storage blob upload-batch \
-              --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" \
               --destination '$web' \
               --source dist \
               --overwrite true
