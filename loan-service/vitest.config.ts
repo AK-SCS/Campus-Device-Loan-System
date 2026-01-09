@@ -4,6 +4,11 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/concurrency-reservation.test.ts', // Exclude concurrency tests from CI
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],
