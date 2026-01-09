@@ -78,12 +78,18 @@ jobs:
         with:
           name: loan-service-package
 
-      - name: Deploy to Azure Function App
-        uses: Azure/functions-action@v1
-        with:
-          app-name: campus-loan-service-NEW
-          package: .
-          publish-profile: ${{ secrets.AZURE_LOAN_SERVICE_PUBLISH_PROFILE }}
+      - name: Create deployment zip
+        run: |
+          cd ${{ github.workspace }}
+          zip -r deploy.zip .
+
+      - name: Deploy to Azure Function App using publish profile
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/zip" \
+            -u '$campus-loan-service:PTAjjGnvdJdMMxZd5FKmb8DJvh8TgkKD8m0nYphvSTndiYDvDoTzNpeJ21Dw' \
+            --data-binary @deploy.zip \
+            https://campus-loan-service.scm.azurewebsites.net/api/zipdeploy
 
   deploy-to-production:
     runs-on: ubuntu-latest
@@ -99,9 +105,15 @@ jobs:
         with:
           name: loan-service-package
 
-      - name: Deploy to Azure Function App
-        uses: Azure/functions-action@v1
-        with:
-          app-name: campus-loan-service
-          package: .
-          publish-profile: ${{ secrets.AZURE_LOAN_SERVICE_PROD_PUBLISH_PROFILE }}
+      - name: Create deployment zip
+        run: |
+          cd ${{ github.workspace }}
+          zip -r deploy.zip .
+
+      - name: Deploy to Azure Function App using publish profile
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/zip" \
+            -u '$campus-loan-service:${{ secrets.AZURE_LOAN_SERVICE_PROD_PASSWORD }}' \
+            --data-binary @deploy.zip \
+            https://campus-loan-service.scm.azurewebsites.net/api/zipdeploy
