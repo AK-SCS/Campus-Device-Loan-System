@@ -78,13 +78,18 @@ jobs:
         with:
           name: device-catalogue-package
 
-      - name: Deploy to Azure Function App
-        uses: Azure/functions-action@v1
-        with:
-          app-name: campus-device-catalogue
-          package: .
-          publish-profile: ${{ secrets.AZURE_DEVICE_CATALOGUE_PUBLISH_PROFILE }}
-          scm-do-build-during-deployment: true
+      - name: Create deployment zip
+        run: |
+          cd ${{ github.workspace }}
+          zip -r deploy.zip .
+
+      - name: Deploy to Azure Function App using publish profile
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/zip" \
+            -u '$campus-device-catalogue:3TH2CRypjqsd9u3q5gqcuxPLcYEG7skPlhtz1tD6Q5ec9G9hAXrQ0yZY8Ndj' \
+            --data-binary @deploy.zip \
+            https://campus-device-catalogue.scm.azurewebsites.net/api/zipdeploy
 
   deploy-to-production:
     runs-on: ubuntu-latest
