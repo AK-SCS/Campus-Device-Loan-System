@@ -634,8 +634,8 @@ function App() {
             📱 Devices
           </button>
 
-          {/* Authenticated user tabs */}
-          {isAuthenticated && (
+          {/* Student tabs - only for users with student role */}
+          {isAuthenticated && hasRole('student') && (
             <>
               <button
                 className={`nav-tab ${viewMode === 'my-loans' ? 'active' : ''}`}
@@ -655,27 +655,27 @@ function App() {
               >
                 ⚠️ Overdue
               </button>
-
-              {/* Staff Management - visible to staff and admin */}
-              {(hasRole('staff') || hasRole('admin')) && (
-                <button
-                  className={`nav-tab ${viewMode === 'staff' ? 'active' : ''}`}
-                  onClick={() => setViewMode('staff')}
-                >
-                  👨‍💼 Staff Management
-                </button>
-              )}
-
-              {/* Admin Dashboard - visible to admin only */}
-              {hasRole('admin') && (
-                <button
-                  className={`nav-tab ${viewMode === 'admin' ? 'active' : ''}`}
-                  onClick={() => setViewMode('admin')}
-                >
-                  🔧 Admin
-                </button>
-              )}
             </>
+          )}
+
+          {/* Staff Management - visible to staff only */}
+          {isAuthenticated && hasRole('staff') && (
+            <button
+              className={`nav-tab ${viewMode === 'staff' ? 'active' : ''}`}
+              onClick={() => setViewMode('staff')}
+            >
+              👨‍💼 Staff Management
+            </button>
+          )}
+
+          {/* Admin Dashboard - visible to admin only */}
+          {isAuthenticated && hasRole('admin') && (
+            <button
+              className={`nav-tab ${viewMode === 'admin' ? 'active' : ''}`}
+              onClick={() => setViewMode('admin')}
+            >
+              🔧 Admin
+            </button>
           )}
         </nav>
 
