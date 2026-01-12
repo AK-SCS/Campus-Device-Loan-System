@@ -927,23 +927,6 @@ export function AdminDashboard() {
       {activeTab === 'users' && (
         <div>
           <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>User Management</h2>
-          
-          <div style={{
-            padding: '1rem',
-            backgroundColor: '#eff6ff',
-            borderRadius: '8px',
-            marginBottom: '1.5rem',
-            border: '1px solid #bfdbfe'
-          }}>
-            <p style={{ color: '#1e40af' }}>
-              💡 User management is handled through Auth0. To add/remove users or change roles, 
-              please use the Auth0 Dashboard at{' '}
-              <a href="https://manage.auth0.com" target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6' }}>
-                manage.auth0.com
-              </a>
-            </p>
-          </div>
-
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
