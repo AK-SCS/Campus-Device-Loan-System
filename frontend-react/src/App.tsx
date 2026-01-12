@@ -623,7 +623,7 @@ function App() {
     <div className="app">
       {/* Header */}
       <header className="header">
-        <h1>🎓 Campus Device Loan Portal</h1>
+        <h1>🎓 Campus Device Loan System</h1>
         
         <nav className="nav-tabs">
           {/* Device Catalogue - always visible to everyone */}
