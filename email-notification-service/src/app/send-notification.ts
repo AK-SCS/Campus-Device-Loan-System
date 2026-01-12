@@ -1,10 +1,4 @@
-/**
- * Send Notification Use Case
- * 
- * Orchestrates email notification sending based on loan events.
- * Maps event types to appropriate email templates and sends via EmailSender.
- */
-
+﻿
 import {
   reservationConfirmation,
   collectionConfirmation,
@@ -21,9 +15,6 @@ import {
 } from '../domain/notification';
 import type { EmailSender } from '../infra/fake-email-sender';
 
-/**
- * Loan event types that trigger email notifications
- */
 export type LoanEventType = 
   | 'device.reserved' 
   | 'device.collected' 
@@ -31,9 +22,6 @@ export type LoanEventType =
   | 'device.reservation.cancelled'
   | 'loan.overdue';
 
-/**
- * Loan event structure matching the events published by Loan Service
- */
 export interface LoanEvent {
   type: LoanEventType;
   data: {
@@ -41,55 +29,37 @@ export interface LoanEvent {
     userId: string;
     deviceId: string;
     deviceModel: string;
-    timestamp: string; // ISO 8601 date string
-    dueDate?: string; // ISO 8601 date string (for reserved and collected)
-    reservedAt?: string; // ISO 8601 date string (for reserved)
-    collectedAt?: string; // ISO 8601 date string (for collected)
-    returnedAt?: string; // ISO 8601 date string (for returned)
-    cancelledAt?: string; // ISO 8601 date string (for cancelled)
-    daysOverdue?: number; // Number of days overdue (for overdue reminders)
+    timestamp: string; 
+    dueDate?: string; 
+    reservedAt?: string; 
+    collectedAt?: string; 
+    returnedAt?: string; 
+    cancelledAt?: string; 
+    daysOverdue?: number; 
   };
 }
 
-/**
- * Dependencies required for sending notifications
- */
 export interface SendNotificationDeps {
   emailSender: EmailSender;
 }
 
-/**
- * Result of sending a notification
- */
 export interface SendNotificationResult {
   success: boolean;
   emailSubject?: string;
   error?: string;
 }
 
-/**
- * Generates recipient email address from userId
- * In production, this would look up the user's actual email from a user service
- * For now, we use a placeholder format: userId@example.com
- */
 function getRecipientEmail(userId: string): string {
-  // TODO: In production, integrate with user service to get real email addresses
+
   return `${userId}@example.com`;
 }
 
-/**
- * Sends a notification email based on a loan event
- * 
- * @param event - The loan event containing type and data
- * @param deps - Dependencies (email sender)
- * @returns Result indicating success or failure
- */
 export async function sendNotification(
   event: LoanEvent,
   deps: SendNotificationDeps
 ): Promise<SendNotificationResult> {
   try {
-    // Validate event has required fields
+
     if (!event.type || !event.data) {
       return {
         success: false,
@@ -100,7 +70,6 @@ export async function sendNotification(
     const { type, data } = event;
     const { loanId, userId, deviceId, deviceModel } = data;
 
-    // Validate common required fields
     if (!loanId || !userId || !deviceId || !deviceModel) {
       return {
         success: false,
@@ -108,7 +77,6 @@ export async function sendNotification(
       };
     }
 
-    // Generate email content based on event type
     let emailContent: EmailContent;
 
     switch (type) {
@@ -219,7 +187,6 @@ export async function sendNotification(
       }
     }
 
-    // Validate generated email content
     if (!validateEmailContent(emailContent)) {
       return {
         success: false,
@@ -227,10 +194,8 @@ export async function sendNotification(
       };
     }
 
-    // Get recipient email address
     const recipientEmail = getRecipientEmail(userId);
 
-    // Send the email
     await deps.emailSender.send(
       recipientEmail,
       emailContent.subject,

@@ -1,8 +1,4 @@
-/**
- * Azure Function: Update Device (HTTP)
- * PUT /api/devices/{id}
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getCorsHeaders } from '../utils/cors.js';
 import { updateDevice } from '../app/update-device.js';
@@ -15,7 +11,6 @@ export async function updateDeviceHttp(
 ): Promise<HttpResponseInit> {
   context.log('HTTP trigger: Update device');
 
-  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return {
       status: 204,
@@ -24,7 +19,7 @@ export async function updateDeviceHttp(
   }
 
   try {
-    // Get device ID from route
+
     const deviceId = request.params.id;
 
     if (!deviceId) {
@@ -36,7 +31,6 @@ export async function updateDeviceHttp(
       };
     }
 
-    // Parse request body
     const body = await request.json() as Partial<CreateDeviceInput>;
 
     if (!body) {
@@ -48,10 +42,8 @@ export async function updateDeviceHttp(
       };
     }
 
-    // Get repository
     const repo = getDeviceRepo();
 
-    // Update device
     const device = await updateDevice(repo, deviceId, body);
 
     context.log(`Device updated: ${device.id} - ${device.brand} ${device.model}`);
@@ -64,8 +56,7 @@ export async function updateDeviceHttp(
 
   } catch (error) {
     context.error('Error updating device:', error);
-    
-    // Return 404 if device not found
+
     if (error instanceof Error && error.message.includes('not found')) {
       return {
         status: 404,
@@ -77,7 +68,6 @@ export async function updateDeviceHttp(
       };
     }
 
-    // Return 400 for validation errors
     if (error instanceof Error && error.message.includes('required')) {
       return {
         status: 400,
@@ -99,14 +89,4 @@ export async function updateDeviceHttp(
     };
   }
 }
-
-// Disabled - merged with delete-device-http.ts to avoid route conflict
-// app.http('updateDevice', {
-//   methods: ['PUT', 'OPTIONS'],
-//   authLevel: 'anonymous',
-//   route: 'devices/{id}',
-//   handler: updateDeviceHttp
-// });
-
-
 

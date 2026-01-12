@@ -1,8 +1,4 @@
-/**
- * Device Domain Model
- * Pure domain entity with validation - no external dependencies
- */
-
+﻿
 export interface Device {
   id: string;
   brand: string;
@@ -20,12 +16,8 @@ export interface CreateDeviceInput {
   availableCount?: number;
 }
 
-/**
- * Factory function to create a new Device with validation
- * Throws errors if validation fails
- */
 export function createDevice(input: CreateDeviceInput): Device {
-  // Validate required fields
+
   if (!input.brand || input.brand.trim().length === 0) {
     throw new Error('Device brand is required');
   }
@@ -47,7 +39,6 @@ export function createDevice(input: CreateDeviceInput): Device {
     throw new Error('Total count must be a non-negative number');
   }
 
-  // Default availableCount to totalCount if not provided
   const availableCount = input.availableCount !== undefined 
     ? input.availableCount 
     : input.totalCount;
@@ -60,7 +51,6 @@ export function createDevice(input: CreateDeviceInput): Device {
     throw new Error('Available count cannot exceed total count');
   }
 
-  // Generate a simple ID (in real implementation, this would come from the database)
   const id = `${input.brand.toLowerCase()}-${input.model.toLowerCase()}-${Date.now()}`;
 
   return {
@@ -73,9 +63,6 @@ export function createDevice(input: CreateDeviceInput): Device {
   };
 }
 
-/**
- * Update device availability (e.g., when device is reserved or returned)
- */
 export function updateAvailability(device: Device, change: number): Device {
   const newAvailableCount = device.availableCount + change;
 
@@ -93,9 +80,6 @@ export function updateAvailability(device: Device, change: number): Device {
   };
 }
 
-/**
- * Check if device is available for reservation
- */
 export function isAvailable(device: Device): boolean {
   return device.availableCount > 0;
 }

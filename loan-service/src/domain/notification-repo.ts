@@ -1,7 +1,4 @@
-/**
- * Notification Repository Interface
- */
-
+﻿
 import { Notification } from './notification.js';
 
 export interface NotificationRepo {

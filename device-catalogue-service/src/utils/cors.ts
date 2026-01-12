@@ -1,8 +1,4 @@
-/**
- * CORS Headers Utility
- * Adds CORS headers to all HTTP responses for local development
- */
-
+﻿
 export function getCorsHeaders(): Record<string, string> {
   return {
     'Access-Control-Allow-Origin': '*',

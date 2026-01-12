@@ -1,17 +1,11 @@
-/**
- * Loan Domain Model
- * 
- * Represents a device loan with reservation, collection, and return lifecycle.
- * Enforces the 2-day loan period business rule.
- */
-
+﻿
 export type LoanStatus = 'reserved' | 'collected' | 'returned' | 'overdue';
 
 export interface Loan {
   id: string;
   userId: string;
   deviceId: string;
-  deviceModel: string; // Store device model for display purposes
+  deviceModel: string; 
   reservedAt: Date;
   collectedAt: Date | null;
   returnedAt: Date | null;
@@ -25,30 +19,22 @@ export interface CreateLoanInput {
   deviceModel: string;
 }
 
-/**
- * Calculate due date: 2 days from reservation time
- */
 export function calculateDueDate(reservedAt: Date): Date {
   const dueDate = new Date(reservedAt);
-  dueDate.setDate(dueDate.getDate() + 2); // Add 2 days
+  dueDate.setDate(dueDate.getDate() + 2); 
   return dueDate;
 }
 
-/**
- * Create a new loan with validation
- */
 export function createLoan(input: CreateLoanInput): Loan {
-  // Validate userId
+
   if (!input.userId || input.userId.trim() === '') {
     throw new Error('User ID is required');
   }
 
-  // Validate deviceId
   if (!input.deviceId || input.deviceId.trim() === '') {
     throw new Error('Device ID is required');
   }
 
-  // Validate deviceModel
   if (!input.deviceModel || input.deviceModel.trim() === '') {
     throw new Error('Device model is required');
   }
@@ -56,7 +42,6 @@ export function createLoan(input: CreateLoanInput): Loan {
   const reservedAt = new Date();
   const dueDate = calculateDueDate(reservedAt);
 
-  // Generate unique loan ID
   const id = `loan-${input.userId}-${input.deviceId}-${Date.now()}`;
 
   return {
@@ -72,9 +57,6 @@ export function createLoan(input: CreateLoanInput): Loan {
   };
 }
 
-/**
- * Mark loan as collected
- */
 export function collectLoan(loan: Loan): Loan {
   if (loan.status !== 'reserved') {
     throw new Error('Only reserved loans can be collected');
@@ -91,9 +73,6 @@ export function collectLoan(loan: Loan): Loan {
   };
 }
 
-/**
- * Mark loan as returned
- */
 export function returnLoan(loan: Loan): Loan {
   if (loan.status !== 'collected') {
     throw new Error('Only collected loans can be returned');
@@ -110,24 +89,18 @@ export function returnLoan(loan: Loan): Loan {
   };
 }
 
-/**
- * Check if loan is overdue
- */
 export function isOverdue(loan: Loan): boolean {
   if (loan.status === 'returned') {
-    return false; // Already returned, not overdue
+    return false; 
   }
 
   const now = new Date();
   return now > loan.dueDate;
 }
 
-/**
- * Update loan status to overdue if past due date
- */
 export function checkAndUpdateOverdue(loan: Loan): Loan {
   if (loan.status === 'returned') {
-    return loan; // No update needed
+    return loan; 
   }
 
   if (isOverdue(loan)) {

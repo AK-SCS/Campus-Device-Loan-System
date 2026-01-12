@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useAuth0 } from '../auth/useAuth0';
 import '../App.css';
 
@@ -27,27 +27,23 @@ export function StaffManagement() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Check if user has staff role
   const isStaff = hasRole('staff') || hasRole('admin');
 
-  // Redirect to login if not authenticated (run unconditionally)
   useEffect(() => {
     if (!isAuthenticated) {
       loginWithRedirect();
     }
   }, [isAuthenticated, loginWithRedirect]);
 
-  // Load loans effect (run unconditionally)
   useEffect(() => {
     if (isAuthenticated && isStaff) {
       loadAllLoans();
-      const interval = setInterval(loadAllLoans, 30000); // Refresh every 30 seconds
+      const interval = setInterval(loadAllLoans, 30000); 
       return () => clearInterval(interval);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [statusFilter, isAuthenticated, isStaff]);
 
-  // Show access denied if authenticated but not staff
   if (isAuthenticated && !isStaff) {
     return (
       <div style={{ padding: '2rem', textAlign: 'center' }}>
@@ -70,7 +66,6 @@ export function StaffManagement() {
     );
   }
 
-  // Don't render the rest if not authenticated
   if (!isAuthenticated) {
     return (
       <div style={{ padding: '2rem', textAlign: 'center' }}>
@@ -100,7 +95,7 @@ export function StaffManagement() {
           headers['Authorization'] = `Bearer ${token}`;
         }
       } catch {
-        // Token fetch failed, continue without auth
+
       }
 
       const response = await fetch(url, { headers });
@@ -134,7 +129,7 @@ export function StaffManagement() {
           headers['Authorization'] = `Bearer ${token}`;
         }
       } catch {
-        // Continue without token
+
       }
 
       const response = await fetch(
@@ -151,8 +146,8 @@ export function StaffManagement() {
       }
 
       setSuccessMessage('Device marked as collected successfully!');
-      await loadAllLoans(); // Reload the list
-      
+      await loadAllLoans(); 
+
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to mark as collected');
@@ -175,7 +170,7 @@ export function StaffManagement() {
           headers['Authorization'] = `Bearer ${token}`;
         }
       } catch {
-        // Continue without token
+
       }
 
       const response = await fetch(
@@ -192,8 +187,8 @@ export function StaffManagement() {
       }
 
       setSuccessMessage('Device marked as returned successfully!');
-      await loadAllLoans(); // Reload the list
-      
+      await loadAllLoans(); 
+
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to mark as returned');
@@ -203,11 +198,11 @@ export function StaffManagement() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'reserved': return '#3b82f6'; // blue
-      case 'collected': return '#f59e0b'; // orange
-      case 'returned': return '#10b981'; // green
-      case 'overdue': return '#ef4444'; // red
-      default: return '#6b7280'; // gray
+      case 'reserved': return '#3b82f6'; 
+      case 'collected': return '#f59e0b'; 
+      case 'returned': return '#10b981'; 
+      case 'overdue': return '#ef4444'; 
+      default: return '#6b7280'; 
     }
   };
 
@@ -221,7 +216,7 @@ export function StaffManagement() {
       loan.userId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       loan.deviceModel.toLowerCase().includes(searchTerm.toLowerCase()) ||
       loan.id.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     return matchesSearch;
   });
 
@@ -273,7 +268,7 @@ export function StaffManagement() {
         </div>
       )}
 
-      {/* Statistics Cards */}
+      {}
       <div style={{ 
         display: 'grid', 
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -341,7 +336,7 @@ export function StaffManagement() {
         </div>
       </div>
 
-      {/* Filters */}
+      {}
       <div style={{ 
         display: 'flex', 
         gap: '1rem', 
@@ -399,7 +394,7 @@ export function StaffManagement() {
         </button>
       </div>
 
-      {/* Loans Table */}
+      {}
       {filteredLoans.length === 0 ? (
         <div style={{ 
           textAlign: 'center', 

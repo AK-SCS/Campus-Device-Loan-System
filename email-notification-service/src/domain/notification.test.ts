@@ -1,8 +1,4 @@
-/**
- * Email Notification Domain Tests
- * Testing email template generation
- */
-
+﻿
 import { describe, it, expect } from 'vitest';
 import {
   reservationConfirmation,

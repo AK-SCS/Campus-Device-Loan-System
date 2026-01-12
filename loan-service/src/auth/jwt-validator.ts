@@ -1,4 +1,4 @@
-import { HttpRequest, InvocationContext } from '@azure/functions';
+﻿import { HttpRequest, InvocationContext } from '@azure/functions';
 import * as jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 
@@ -8,7 +8,7 @@ const AUTH0_AUDIENCE = 'https://campusdeviceloansystem';
 const client = jwksClient({
   jwksUri: `https://${AUTH0_DOMAIN}/.well-known/jwks.json`,
   cache: true,
-  cacheMaxAge: 86400000, // 24 hours
+  cacheMaxAge: 86400000, 
 });
 
 function getKey(header: any, callback: any) {
@@ -32,7 +32,7 @@ export interface DecodedToken {
 export async function validateToken(request: HttpRequest, context: InvocationContext): Promise<DecodedToken | null> {
   try {
     const authHeader = request.headers.get('authorization');
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       context.log('No authorization header found');
       return null;
@@ -67,7 +67,7 @@ export async function validateToken(request: HttpRequest, context: InvocationCon
 
 export function requireAuth(request: HttpRequest, context: InvocationContext): { status: number; jsonBody: any } | null {
   const authHeader = request.headers.get('authorization');
-  
+
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return {
       status: 401,
@@ -77,7 +77,7 @@ export function requireAuth(request: HttpRequest, context: InvocationContext): {
       }
     };
   }
-  
+
   return null;
 }
 

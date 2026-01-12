@@ -1,7 +1,4 @@
-/**
- * Cosmos DB Notification Repository Implementation
- */
-
+﻿
 import { CosmosClient, Container, Database } from '@azure/cosmos';
 import { Notification } from '../domain/notification.js';
 import { NotificationRepo } from '../domain/notification-repo.js';
@@ -18,8 +15,7 @@ export class CosmosNotificationRepo implements NotificationRepo {
     const client = new CosmosClient(connectionString);
     const database = client.database(databaseName);
     this.container = database.container(containerName);
-    
-    // Auto-create container if it doesn't exist
+
     this.containerReady = this.initializeContainer(database, containerName);
   }
 
@@ -36,23 +32,22 @@ export class CosmosNotificationRepo implements NotificationRepo {
   }
 
   async save(notification: Notification): Promise<Notification> {
-    await this.containerReady; // Ensure container exists
+    await this.containerReady; 
     const { resource } = await this.container.items.upsert({
       id: notification.id,
       ...notification
     });
-    
+
     if (!resource) {
       throw new Error("Failed to save notification to Cosmos DB");
     }
 
-    // Remove Cosmos DB metadata
     const { _rid, _self, _etag, _attachments, _ts, ...cleanNotification } = resource as any;
     return cleanNotification as Notification;
   }
 
   async getByUserId(userId: string): Promise<Notification[]> {
-    await this.containerReady; // Ensure container exists
+    await this.containerReady; 
     const query = 'SELECT * FROM c WHERE c.userId = @userId ORDER BY c.createdAt DESC';
     const { resources } = await this.container.items
       .query({
@@ -64,7 +59,7 @@ export class CosmosNotificationRepo implements NotificationRepo {
   }
 
   async markAsRead(id: string): Promise<void> {
-    await this.containerReady; // Ensure container exists
+    await this.containerReady; 
     const { resource } = await this.container.item(id, id).read();
     if (resource) {
       resource.read = true;

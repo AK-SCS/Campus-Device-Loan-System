@@ -1,8 +1,4 @@
-/**
- * Health Check HTTP Endpoint
- * Returns service health status and version information
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 
 export async function healthCheck(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {

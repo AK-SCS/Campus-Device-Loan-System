@@ -1,14 +1,13 @@
-import * as appInsights from 'applicationinsights';
+﻿import * as appInsights from 'applicationinsights';
 import { context, trace } from '@opentelemetry/api';
 
-// Severity levels: 0=Verbose, 1=Information, 2=Warning, 3=Error, 4=Critical
 type SeverityLevel = 0 | 1 | 2 | 3 | 4;
 
 let telemetryClient: appInsights.TelemetryClient | null = null;
 
 export function setupTelemetry(): void {
   const connectionString = process.env.APPLICATIONINSIGHTS_CONNECTION_STRING;
-  
+
   if (!connectionString) {
     console.log('⚠️  Application Insights not configured - telemetry disabled');
     return;

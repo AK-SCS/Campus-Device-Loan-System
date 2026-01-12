@@ -1,4 +1,4 @@
-import { useAuth0 } from './useAuth0';
+﻿import { useAuth0 } from './useAuth0';
 
 export const LoginButton = () => {
   const { loginWithRedirect } = useAuth0();

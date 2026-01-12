@@ -1,8 +1,4 @@
-/**
- * Notification Domain Entity
- * Stores user notifications for device events (collected, returned, available)
- */
-
+﻿
 export interface Notification {
   id: string;
   userId: string;

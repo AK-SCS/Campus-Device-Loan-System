@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+﻿import { createContext, useEffect, useState } from 'react';
 import { User } from '@auth0/auth0-spa-js';
 import { getAuth0Client, getAuth0ClientInstance } from './auth0Client';
 
@@ -15,7 +15,6 @@ interface Auth0ContextType {
 
 const Auth0Context = createContext<Auth0ContextType | undefined>(undefined);
 
-// Export context for useAuth0 hook
 export { Auth0Context };
 
 export const Auth0Provider = ({ children }: { children: React.ReactNode }) => {
@@ -29,7 +28,6 @@ export const Auth0Provider = ({ children }: { children: React.ReactNode }) => {
       try {
         const client = await getAuth0Client();
 
-        // Handle redirect callback
         if (window.location.search.includes('code=') || window.location.search.includes('error=')) {
           await client.handleRedirectCallback();
           window.history.replaceState({}, document.title, window.location.pathname);
@@ -41,29 +39,26 @@ export const Auth0Provider = ({ children }: { children: React.ReactNode }) => {
         if (authenticated) {
           const userData = await client.getUser();
           setUser(userData);
-          
-          // Extract role from existing Auth0 setup (app_metadata.role)
-          // Support both singular role and roles array
+
           const singleRole = userData?.['https://campus-device-loan-api/role'] as string;
           const rolesArray = (userData?.['https://campus-device-loan.com/roles'] as string[]) || [];
-          
+
           let roles: string[] = [];
-          
+
           if (singleRole) {
-            // Convert singular role to lowercase for consistency
+
             roles = [singleRole.toLowerCase()];
           } else if (rolesArray.length > 0) {
             roles = rolesArray.map(r => r.toLowerCase());
           }
-          
-          // Debug logging
+
           console.log('=== Auth0 User Data ===');
           console.log('Full user object:', userData);
           console.log('Single role (app_metadata):', singleRole);
           console.log('Roles array:', rolesArray);
           console.log('Final roles:', roles);
           console.log('=====================');
-          
+
           setUserRoles(roles);
         }
       } catch (error) {

@@ -1,8 +1,4 @@
-/**
- * Readiness Check HTTP Endpoint
- * Returns whether the service and its dependencies are ready to handle requests
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getDeviceRepo } from '../config/appServices';
 
@@ -15,9 +11,9 @@ export async function readinessCheck(request: HttpRequest, context: InvocationCo
   };
 
   try {
-    // Check if we can connect to Cosmos DB
+
     const repo = getDeviceRepo();
-    await repo.list(); // Try to query the database
+    await repo.list(); 
     checks.database = true;
   } catch (error) {
     context.error('Database connection failed:', error);

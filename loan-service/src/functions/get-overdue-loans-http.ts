@@ -1,10 +1,4 @@
-/**
- * Get Overdue Loans HTTP Endpoint
- * 
- * GET /api/overdue-loans
- * Returns all loans that are past their due date
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getCorsHeaders } from '../utils/cors.js';
 import { getOverdueLoans } from '../app/get-overdue-loans.js';
@@ -16,7 +10,6 @@ export async function getOverdueLoansHttp(
 ): Promise<HttpResponseInit> {
   context.log('HTTP trigger function processing request for overdue loans');
 
-  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return {
       status: 200,
@@ -25,7 +18,7 @@ export async function getOverdueLoansHttp(
   }
 
   try {
-    // Call use case
+
     const overdueLoans = await getOverdueLoans({
       loanRepo: getLoanRepo()
     });
@@ -58,6 +51,4 @@ app.http('getOverdueLoans', {
   route: 'overdue-loans',
   handler: getOverdueLoansHttp
 });
-
-
 

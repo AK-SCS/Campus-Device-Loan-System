@@ -1,10 +1,4 @@
-/**
- * List Loans HTTP Endpoint
- * 
- * GET /api/loans
- * Optional query parameters: userId, deviceId, status
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getCorsHeaders } from '../utils/cors.js';
 import { listLoans } from '../app/list-loans.js';
@@ -17,7 +11,6 @@ export async function listLoansHttp(
 ): Promise<HttpResponseInit> {
   context.log('HTTP trigger function processing request for list loans');
 
-  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return {
       status: 200,
@@ -26,12 +19,11 @@ export async function listLoansHttp(
   }
 
   try {
-    // Get optional query parameters
+
     const userId = request.query.get('userId') || undefined;
     const deviceId = request.query.get('deviceId') || undefined;
     const statusParam = request.query.get('status');
-    
-    // Validate status if provided
+
     let status: LoanStatus | undefined;
     if (statusParam) {
       const validStatuses: LoanStatus[] = ['reserved', 'collected', 'returned', 'overdue'];
@@ -47,7 +39,6 @@ export async function listLoansHttp(
       status = statusParam as LoanStatus;
     }
 
-    // Call use case
     const loans = await listLoans(
       { loanRepo: getLoanRepo() },
       { userId, deviceId, status }
@@ -81,7 +72,4 @@ app.http('listLoans', {
   route: 'loans',
   handler: listLoansHttp
 });
-
-
-
 

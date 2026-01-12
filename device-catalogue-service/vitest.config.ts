@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+﻿import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
@@ -8,11 +8,9 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html'],
       exclude: [
-        'node_modules/**',
-        'dist/**',
-        '**/*.config.ts',
+        'node_modules*.config.ts',
         '**/types.ts',
-        'src/functions/**', // Skip HTTP endpoints - hard to test, already manually verified
+        'src/functions/**', 
       ],
       thresholds: {
         lines: 80,

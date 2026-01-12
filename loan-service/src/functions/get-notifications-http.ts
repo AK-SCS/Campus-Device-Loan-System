@@ -1,8 +1,4 @@
-/**
- * Get User Notifications HTTP Trigger
- * GET /api/notifications?userId={email}
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getNotificationRepo } from '../config/appServices.js';
 
@@ -18,7 +14,7 @@ export async function getNotificationsHttp(
   request: HttpRequest,
   context: InvocationContext
 ): Promise<HttpResponseInit> {
-  // Handle OPTIONS preflight
+
   if (request.method === 'OPTIONS') {
     return {
       status: 204,
@@ -54,7 +50,7 @@ export async function getNotificationsHttp(
 
   } catch (error) {
     context.error('Error getting notifications:', error);
-    
+
     return {
       status: 500,
       headers: getCorsHeaders(),

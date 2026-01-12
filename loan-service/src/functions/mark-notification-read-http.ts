@@ -1,8 +1,4 @@
-/**
- * Mark Notification as Read HTTP Trigger
- * PATCH /api/notifications/{id}/read
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getNotificationRepo } from '../config/appServices.js';
 
@@ -18,7 +14,7 @@ export async function markNotificationReadHttp(
   request: HttpRequest,
   context: InvocationContext
 ): Promise<HttpResponseInit> {
-  // Handle OPTIONS preflight
+
   if (request.method === 'OPTIONS') {
     return {
       status: 204,
@@ -56,7 +52,7 @@ export async function markNotificationReadHttp(
 
   } catch (error) {
     context.error('Error marking notification as read:', error);
-    
+
     return {
       status: 500,
       headers: getCorsHeaders(),

@@ -1,10 +1,4 @@
-/**
- * Cancel Loan HTTP Endpoint
- * 
- * DELETE /api/loans/{id}/cancel
- * Allows students to cancel their reservation before collection
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getCorsHeaders } from '../utils/cors.js';
 import { cancelLoan } from '../app/cancel-loan.js';
@@ -16,7 +10,6 @@ export async function cancelLoanHttp(
 ): Promise<HttpResponseInit> {
   context.log('HTTP trigger function processing request to cancel loan');
 
-  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return {
       status: 200,
@@ -25,7 +18,7 @@ export async function cancelLoanHttp(
   }
 
   try {
-    // Get loan ID from route
+
     const loanId = request.params.id;
 
     if (!loanId) {
@@ -38,7 +31,6 @@ export async function cancelLoanHttp(
       };
     }
 
-    // Get userId from request body or query (in production, this will come from JWT)
     const body = await request.json() as { userId?: string };
     const userId = body?.userId || request.query.get('userId');
 
@@ -52,7 +44,6 @@ export async function cancelLoanHttp(
       };
     }
 
-    // Call use case
     await cancelLoan(
       {
         loanRepo: getLoanRepo(),
@@ -93,11 +84,9 @@ export async function cancelLoanHttp(
 }
 
 app.http('cancelLoan', {
-  methods: ['DELETE', 'POST', 'OPTIONS'], // POST for compatibility
+  methods: ['DELETE', 'POST', 'OPTIONS'], 
   authLevel: 'anonymous',
   route: 'loans/{id}/cancel',
   handler: cancelLoanHttp
 });
-
-
 

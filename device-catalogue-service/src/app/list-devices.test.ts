@@ -1,15 +1,10 @@
-/**
- * Application Layer Tests
- * Testing use cases with mock dependencies
- */
-
+﻿
 import { describe, it, expect, beforeEach } from 'vitest';
 import { listDevices } from './list-devices';
 import { searchDevices } from './search-devices';
 import { Device } from '../domain/device';
 import { DeviceRepo } from '../domain/device-repo';
 
-// Mock repository implementation for testing
 class MockDeviceRepo implements DeviceRepo {
   private devices: Device[] = [];
 

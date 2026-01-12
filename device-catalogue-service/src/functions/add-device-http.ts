@@ -1,8 +1,4 @@
-/**
- * Azure Function: Add Device (HTTP)
- * POST /api/devices
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getCorsHeaders } from '../utils/cors.js';
 import { addDevice } from '../app/add-device.js';
@@ -15,8 +11,7 @@ export async function addDeviceHttp(
   context: InvocationContext
 ): Promise<HttpResponseInit> {
   const startTime = Date.now();
-  
-  // Handle OPTIONS preflight
+
   if (request.method === 'OPTIONS') {
     return {
       status: 204,
@@ -27,7 +22,7 @@ export async function addDeviceHttp(
   context.log('HTTP trigger: Add device');
 
   try {
-    // Parse request body
+
     const body = await request.json() as CreateDeviceInput;
 
     if (!body) {
@@ -40,15 +35,12 @@ export async function addDeviceHttp(
       };
     }
 
-    // Get repository
     const repo = getDeviceRepo();
 
-    // Add device
     const device = await addDevice(repo, body);
 
     const duration = Date.now() - startTime;
-    
-    // Track successful device creation
+
     trackEvent('DeviceCreated', {
       deviceId: device.id,
       brand: device.brand,
@@ -56,7 +48,7 @@ export async function addDeviceHttp(
       category: device.category,
       duration: duration.toString()
     });
-    
+
     trackMetric('DeviceOperationDuration', duration, { 
       operation: 'create',
       status: 'success'
@@ -72,21 +64,19 @@ export async function addDeviceHttp(
 
   } catch (error) {
     const duration = Date.now() - startTime;
-    
-    // Track failed device creation
+
     trackEvent('DeviceCreationFailure', {
       error: error instanceof Error ? error.message : 'Unknown error',
       duration: duration.toString()
     });
-    
+
     trackMetric('DeviceOperationDuration', duration, { 
       operation: 'create',
       status: 'failure'
     });
 
     context.error('Error adding device:', error);
-    
-    // Return 400 for validation errors
+
     if (error instanceof Error && error.message.includes('required')) {
       return {
         status: 400,
@@ -108,14 +98,4 @@ export async function addDeviceHttp(
     };
   }
 }
-
-// Route registration disabled - merged with list-devices-http.ts to avoid route conflict
-// app.http('addDevice', {
-//   methods: ['POST', 'OPTIONS'],
-//   authLevel: 'anonymous',
-//   route: 'devices',
-//   handler: addDeviceHttp
-// });
-
-
 

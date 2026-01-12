@@ -1,10 +1,4 @@
-/**
- * Return Device HTTP Endpoint
- * 
- * POST /api/loans/{loanId}/return
- * Marks a collected loan as returned (staff only in production)
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getCorsHeaders } from '../utils/cors.js';
 import { returnDevice } from '../app/return-device';
@@ -18,7 +12,6 @@ export async function returnDeviceHttp(
   const startTime = Date.now();
   context.log('HTTP trigger function processing request for return device');
 
-  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return {
       status: 204,
@@ -27,7 +20,7 @@ export async function returnDeviceHttp(
   }
 
   try {
-    // Get loan ID from route parameters
+
     const loanId = request.params.loanId;
 
     if (!loanId) {
@@ -40,7 +33,6 @@ export async function returnDeviceHttp(
       };
     }
 
-    // Call use case
     await returnDevice(
       {
         loanRepo: getLoanRepo(),
@@ -53,13 +45,12 @@ export async function returnDeviceHttp(
     );
 
     const duration = Date.now() - startTime;
-    
-    // Track successful return
+
     trackEvent('DeviceReturnSuccess', {
       loanId,
       duration: duration.toString()
     });
-    
+
     trackMetric('ReturnDuration', duration, { 
       operation: 'return',
       status: 'success'
@@ -78,13 +69,12 @@ export async function returnDeviceHttp(
 
   } catch (error) {
     const duration = Date.now() - startTime;
-    
-    // Track failed return
+
     trackEvent('DeviceReturnFailure', {
       error: error instanceof Error ? error.message : 'Unknown error',
       duration: duration.toString()
     });
-    
+
     trackMetric('ReturnDuration', duration, { 
       operation: 'return',
       status: 'failure'
@@ -92,11 +82,9 @@ export async function returnDeviceHttp(
 
     context.error('Error returning device:', error);
 
-    // Handle specific business logic errors
     if (error instanceof Error) {
       const errorMessage = error.message;
 
-      // Client errors (400)
       if (
         errorMessage.includes('required') ||
         errorMessage.includes('not found') ||
@@ -113,7 +101,6 @@ export async function returnDeviceHttp(
       }
     }
 
-    // Server errors (500)
     return {
       status: 500,
       headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
@@ -131,6 +118,4 @@ app.http('returnDevice', {
   route: 'loans/{loanId}/return',
   handler: returnDeviceHttp
 });
-
-
 

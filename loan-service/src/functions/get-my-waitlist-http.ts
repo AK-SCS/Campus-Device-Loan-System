@@ -1,8 +1,4 @@
-/**
- * Azure Function: Get My Waitlist Entries (HTTP)
- * GET /api/waitlist/my?userId={userId}
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getCorsHeaders } from '../utils/cors.js';
 import { getWaitlistRepo } from '../config/appServices.js';
@@ -13,7 +9,6 @@ export async function getMyWaitlistHttp(
 ): Promise<HttpResponseInit> {
   context.log('HTTP trigger: Get my waitlist entries');
 
-  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return {
       status: 204,

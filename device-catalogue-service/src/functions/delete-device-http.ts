@@ -1,8 +1,4 @@
-/**
- * Azure Function: Delete Device (HTTP)
- * DELETE /api/devices/{id}
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getCorsHeaders } from '../utils/cors.js';
 import { deleteDevice } from '../app/delete-device.js';
@@ -14,7 +10,6 @@ export async function deleteDeviceHttp(
 ): Promise<HttpResponseInit> {
   context.log('HTTP trigger: Delete device');
 
-  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return {
       status: 204,
@@ -23,7 +18,7 @@ export async function deleteDeviceHttp(
   }
 
   try {
-    // Get device ID from route
+
     const deviceId = request.params.id;
 
     if (!deviceId) {
@@ -35,23 +30,20 @@ export async function deleteDeviceHttp(
       };
     }
 
-    // Get repository
     const repo = getDeviceRepo();
 
-    // Delete device
     await deleteDevice(repo, deviceId);
 
     context.log(`Device deleted: ${deviceId}`);
 
     return {
-      status: 204, // No content
+      status: 204, 
       headers: getCorsHeaders()
     };
 
   } catch (error) {
     context.error('Error deleting device:', error);
-    
-    // Return 404 if device not found
+
     if (error instanceof Error && error.message.includes('not found')) {
       return {
         status: 404,
@@ -79,7 +71,7 @@ app.http('deleteDevice', {
   authLevel: 'anonymous',
   route: 'devices/{id}',
   handler: async (request: HttpRequest, context: InvocationContext) => {
-    // Handle OPTIONS preflight
+
     if (request.method === 'OPTIONS') {
       return {
         status: 204,
@@ -87,10 +79,9 @@ app.http('deleteDevice', {
       };
     }
 
-    // Handle PUT (update)
     if (request.method === 'PUT') {
       context.log('HTTP trigger: Update device');
-      
+
       try {
         const deviceId = request.params.id;
         if (!deviceId) {
@@ -123,7 +114,7 @@ app.http('deleteDevice', {
 
       } catch (error) {
         context.error('Error updating device:', error);
-        
+
         if (error instanceof Error && error.message.includes('not found')) {
           return {
             status: 404,
@@ -151,10 +142,7 @@ app.http('deleteDevice', {
       }
     }
 
-    // Handle DELETE (original delete logic)
     return deleteDeviceHttp(request, context);
   }
 });
-
-
 

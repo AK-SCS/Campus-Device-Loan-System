@@ -1,8 +1,4 @@
-/**
- * Readiness Check HTTP Endpoint
- * Returns whether the service and its dependencies are ready to handle requests
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getLoanRepo } from '../config/appServices';
 
@@ -12,13 +8,13 @@ export async function readinessCheck(request: HttpRequest, context: InvocationCo
   const checks: { [key: string]: boolean } = {
     service: true,
     database: false,
-    eventGrid: true // Event Grid is passive, assume ready
+    eventGrid: true 
   };
 
   try {
-    // Check if we can connect to Cosmos DB
+
     const repo = getLoanRepo();
-    await repo.list(); // Try to query the database
+    await repo.list(); 
     checks.database = true;
   } catch (error) {
     context.error('Database connection failed:', error);

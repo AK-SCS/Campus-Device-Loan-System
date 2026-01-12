@@ -1,9 +1,4 @@
-/**
- * Get Loan HTTP Endpoint
- * 
- * GET /api/loans/{loanId}
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getCorsHeaders } from '../utils/cors.js';
 import { getLoan } from '../app/get-loan';
@@ -16,7 +11,7 @@ export async function getLoanHttp(
   context.log('HTTP trigger function processing request for get loan');
 
   try {
-    // Get loan ID from route parameters
+
     const loanId = request.params.loanId;
 
     if (!loanId) {
@@ -31,7 +26,6 @@ export async function getLoanHttp(
 
     context.log(`Retrieving loan with ID: ${loanId}`);
 
-    // Call use case
     const loan = await getLoan(
       { loanRepo: getLoanRepo() },
       { loanId }
@@ -58,7 +52,6 @@ export async function getLoanHttp(
   } catch (error) {
     context.error('Error getting loan:', error);
 
-    // Handle validation errors as client errors
     if (error instanceof Error && error.message.includes('required')) {
       return {
         status: 400,
@@ -69,7 +62,6 @@ export async function getLoanHttp(
       };
     }
 
-    // Server errors
     return {
       status: 500,
       headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
@@ -87,6 +79,4 @@ app.http('getLoan', {
   route: 'loans/{loanId}',
   handler: getLoanHttp
 });
-
-
 

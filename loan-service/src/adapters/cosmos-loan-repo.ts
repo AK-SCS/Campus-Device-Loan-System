@@ -1,4 +1,4 @@
-import { CosmosClient, Container } from "@azure/cosmos";
+﻿import { CosmosClient, Container } from "@azure/cosmos";
 import { LoanRepo } from "../domain/loan-repo.js";
 import { Loan } from "../domain/loan.js";
 
@@ -13,18 +13,17 @@ export class CosmosLoanRepo implements LoanRepo {
 
   async save(loan: Loan): Promise<Loan> {
     try {
-      // In Cosmos DB, we use the loan as both the document and provide the id
+
       const { resource } = await this.container.items.upsert({
         id: loan.id,
         ...loan,
-        _type: "loan" // Add type identifier for multi-document containers
+        _type: "loan" 
       });
-      
+
       if (!resource) {
         throw new Error("Failed to save loan to Cosmos DB");
       }
 
-      // Remove Cosmos DB metadata and return clean loan object
       const { _rid, _self, _etag, _attachments, _ts, _type, ...cleanLoan } = resource;
       return cleanLoan as Loan;
     } catch (error) {
@@ -131,7 +130,7 @@ export class CosmosLoanRepo implements LoanRepo {
   async getById(id: string): Promise<Loan | null> {
     try {
       const { resource } = await this.container.item(id, id).read();
-      
+
       if (!resource || resource._type !== "loan") {
         return null;
       }
@@ -151,7 +150,7 @@ export class CosmosLoanRepo implements LoanRepo {
       await this.container.item(id, id).delete();
     } catch (error: any) {
       if (error.code === 404) {
-        // Loan doesn't exist, which is fine for delete
+
         return;
       }
       console.error("Error deleting loan from Cosmos DB:", error);
@@ -161,7 +160,7 @@ export class CosmosLoanRepo implements LoanRepo {
 
   private cleanLoan(resource: any): Loan {
     const { _rid, _self, _etag, _attachments, _ts, _type, ...loan } = resource;
-    // Convert date strings back to Date objects
+
     if (loan.reservedDate && typeof loan.reservedDate === 'string') {
       loan.reservedDate = new Date(loan.reservedDate);
     }

@@ -1,8 +1,4 @@
-/**
- * Azure Function: Join Waitlist (HTTP)
- * POST /api/waitlist
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getCorsHeaders } from '../utils/cors.js';
 import { joinWaitlist } from '../app/join-waitlist.js';
@@ -14,7 +10,6 @@ export async function joinWaitlistHttp(
 ): Promise<HttpResponseInit> {
   context.log('HTTP trigger: Join waitlist');
 
-  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return {
       status: 204,

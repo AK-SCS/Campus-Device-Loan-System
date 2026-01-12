@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useAuth0 } from '../auth/useAuth0';
 import '../App.css';
 
@@ -61,14 +61,12 @@ export function AdminDashboard() {
 
   const isAdmin = hasRole('admin');
 
-  // Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       loginWithRedirect();
     }
   }, [isAuthenticated, loginWithRedirect]);
 
-  // Load data
   useEffect(() => {
     if (isAuthenticated && isAdmin) {
       loadAllData();
@@ -77,7 +75,6 @@ export function AdminDashboard() {
     }
   }, [isAuthenticated, isAdmin]);
 
-  // Access denied for non-admin
   if (isAuthenticated && !isAdmin) {
     return (
       <div style={{ padding: '2rem', textAlign: 'center' }}>
@@ -114,21 +111,18 @@ export function AdminDashboard() {
       setLoading(true);
       setError(null);
 
-      // Load devices
       const devicesResponse = await fetch(`${API_BASE.deviceCatalogue}/devices`);
       if (devicesResponse.ok) {
         const devicesData = await devicesResponse.json();
         setDevices(devicesData);
       }
 
-      // Load all loans
       const loansResponse = await fetch(`${API_BASE.loanService}/loans`);
       if (loansResponse.ok) {
         const loansData = await loansResponse.json();
         setLoans(loansData);
       }
 
-      // Mock users data (in real app, would come from Auth0 Management API)
       setUsers([
         { email: 'admin@test.com', role: 'Admin', name: 'System Admin' },
         { email: 'staff@test.com', role: 'Staff', name: 'Staff Member' },
@@ -144,12 +138,11 @@ export function AdminDashboard() {
 
   const handleAddDevice = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       setLoading(true);
       setError(null);
 
-      // Note: This endpoint needs to be created in device-catalogue-service
       const response = await fetch(`${API_BASE.deviceCatalogue}/devices`, {
         method: 'POST',
         headers: {
@@ -172,7 +165,7 @@ export function AdminDashboard() {
         totalCount: 1,
         availableCount: 1
       });
-      
+
       await loadAllData();
 
     } catch (err) {
@@ -215,7 +208,7 @@ export function AdminDashboard() {
 
   const handleEditDevice = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!editingDevice) return;
 
     try {
@@ -284,7 +277,6 @@ export function AdminDashboard() {
     }
   };
 
-  // Statistics
   const stats = {
     totalDevices: devices.length,
     totalInventory: devices.reduce((sum, d) => sum + d.totalCount, 0),
@@ -302,7 +294,7 @@ export function AdminDashboard() {
         <p style={{ color: '#6b7280' }}>System administration and management</p>
       </div>
 
-      {/* Success/Error Messages */}
+      {}
       {successMessage && (
         <div style={{
           padding: '1rem',
@@ -339,7 +331,7 @@ export function AdminDashboard() {
         </div>
       )}
 
-      {/* Tabs */}
+      {}
       <div style={{
         display: 'flex',
         gap: '1rem',
@@ -404,11 +396,11 @@ export function AdminDashboard() {
         </button>
       </div>
 
-      {/* Overview Tab */}
+      {}
       {activeTab === 'overview' && (
         <div>
           <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>System Overview</h2>
-          
+
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -523,7 +515,7 @@ export function AdminDashboard() {
         </div>
       )}
 
-      {/* Devices Tab */}
+      {}
       {activeTab === 'devices' && (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
@@ -640,7 +632,7 @@ export function AdminDashboard() {
             </form>
           )}
 
-          {/* Edit Device Modal */}
+          {}
           {editingDevice && (
             <div style={{
               position: 'fixed',
@@ -854,11 +846,11 @@ export function AdminDashboard() {
         </div>
       )}
 
-      {/* Loans Tab */}
+      {}
       {activeTab === 'loans' && (
         <div>
           <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>All Loans</h2>
-          
+
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
@@ -923,7 +915,7 @@ export function AdminDashboard() {
         </div>
       )}
 
-      {/* Users Tab */}
+      {}
       {activeTab === 'users' && (
         <div>
           <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>User Management</h2>

@@ -1,7 +1,4 @@
-/**
- * Waitlist Domain Entity
- */
-
+﻿
 export interface Waitlist {
   id: string;
   userId: string;

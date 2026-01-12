@@ -1,8 +1,4 @@
-/**
- * Azure Function: Update Device Availability (HTTP)
- * PATCH /api/devices/{id}/availability
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getCorsHeaders } from '../utils/cors.js';
 import { updateDeviceAvailability } from '../app/update-device-availability.js';
@@ -19,7 +15,7 @@ export async function updateAvailabilityHttp(
   context.log('HTTP trigger: Update device availability');
 
   try {
-    // Get device ID from route
+
     const deviceId = request.params.id;
 
     if (!deviceId) {
@@ -31,7 +27,6 @@ export async function updateAvailabilityHttp(
       };
     }
 
-    // Parse request body
     const body = await request.json() as UpdateAvailabilityRequest;
 
     if (!body || body.change === undefined) {
@@ -52,10 +47,8 @@ export async function updateAvailabilityHttp(
       };
     }
 
-    // Get repository
     const repo = getDeviceRepo();
 
-    // Update availability
     const device = await updateDeviceAvailability(repo, deviceId, body.change);
 
     context.log(`Device availability updated: ${device.id} - ${device.availableCount} available`);
@@ -67,8 +60,7 @@ export async function updateAvailabilityHttp(
 
   } catch (error) {
     context.error('Error updating availability:', error);
-    
-    // Return 404 if device not found
+
     if (error instanceof Error && error.message.includes('not found')) {
       return {
         status: 404,
@@ -79,7 +71,6 @@ export async function updateAvailabilityHttp(
       };
     }
 
-    // Return 400 for availability errors
     if (error instanceof Error && error.message.includes('availability')) {
       return {
         status: 400,
@@ -106,6 +97,4 @@ app.http('updateAvailability', {
   route: 'devices/{id}/availability',
   handler: updateAvailabilityHttp
 });
-
-
 

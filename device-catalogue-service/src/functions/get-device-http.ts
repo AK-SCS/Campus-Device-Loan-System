@@ -1,8 +1,4 @@
-/**
- * Get Device HTTP Function
- * GET /api/devices/{id} - Returns a single device by ID
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getCorsHeaders } from '../utils/cors.js';
 import { getDevice } from '../app/get-device.js';
@@ -15,7 +11,7 @@ export async function getDeviceHttp(
   context.log('HTTP trigger function processing request for get device');
 
   try {
-    // Extract device ID from route parameters
+
     const deviceId = request.params.id;
 
     if (!deviceId) {
@@ -33,7 +29,6 @@ export async function getDeviceHttp(
 
     context.log(`Retrieving device with ID: ${deviceId}`);
 
-    // Call the application layer use case
     const device = await getDevice(
       {
         deviceRepo: getDeviceRepo()
@@ -69,7 +64,6 @@ export async function getDeviceHttp(
   } catch (error) {
     context.error('Error getting device:', error);
 
-    // Check if it's a validation error from the application layer
     if (error instanceof Error && error.message.includes('required')) {
       return {
         status: 400,
@@ -102,6 +96,4 @@ app.http('getDevice', {
   route: 'devices/{id}',
   handler: getDeviceHttp
 });
-
-
 

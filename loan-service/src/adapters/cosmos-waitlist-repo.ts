@@ -1,7 +1,4 @@
-/**
- * Cosmos DB Waitlist Repository Implementation
- */
-
+﻿
 import { CosmosClient, Container } from '@azure/cosmos';
 import { Waitlist } from '../domain/waitlist.js';
 import { WaitlistRepo } from '../domain/waitlist-repo.js';
@@ -17,8 +14,7 @@ export class CosmosWaitlistRepo implements WaitlistRepo {
     const client = new CosmosClient(connectionString);
     const database = client.database(databaseName);
     this.container = database.container(containerName);
-    
-    // Auto-create container if it doesn't exist
+
     this.initializeContainer(database, containerName);
   }
 
@@ -39,12 +35,11 @@ export class CosmosWaitlistRepo implements WaitlistRepo {
       id: waitlist.id,
       ...waitlist
     });
-    
+
     if (!resource) {
       throw new Error("Failed to save waitlist entry to Cosmos DB");
     }
 
-    // Remove Cosmos DB metadata and return clean object
     const { _rid, _self, _etag, _attachments, _ts, ...cleanWaitlist } = resource as any;
     return cleanWaitlist as Waitlist;
   }

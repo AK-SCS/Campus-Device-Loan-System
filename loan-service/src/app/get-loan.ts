@@ -1,9 +1,4 @@
-/**
- * Get Loan Use Case
- * 
- * Retrieves a specific loan by ID.
- */
-
+﻿
 import { Loan } from '../domain/loan';
 import { LoanRepo } from '../domain/loan-repo';
 

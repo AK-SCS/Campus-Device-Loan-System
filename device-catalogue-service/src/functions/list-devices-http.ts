@@ -1,11 +1,4 @@
-/**
- * List/Search Devices HTTP Function
- * GET /api/devices - Returns all devices
- * GET /api/devices?category=laptop - Filter by category
- * GET /api/devices?availableOnly=true - Only available devices
- * GET /api/devices?minAvailability=3 - Minimum availability
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { listDevices } from '../app/list-devices.js';
 import { searchDevices } from '../app/search-devices.js';
@@ -19,7 +12,6 @@ export async function listDevicesHttp(
 ): Promise<HttpResponseInit> {
   context.log('HTTP trigger function processing request for list/search devices');
 
-  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return {
       status: 200,
@@ -30,17 +22,15 @@ export async function listDevicesHttp(
   try {
     const startTime = Date.now();
     const repo = getDeviceRepo();
-    
-    // Check if any search parameters are provided
+
     const category = request.query.get('category') as 'laptop' | 'tablet' | 'camera' | 'other' | null;
     const availableOnly = request.query.get('availableOnly') === 'true';
     const minAvailability = request.query.get('minAvailability') 
       ? parseInt(request.query.get('minAvailability')!, 10) 
       : undefined;
 
-    // If any search criteria is provided, use search function
     if (category || availableOnly || minAvailability !== undefined) {
-      // Validate category if provided
+
       if (category && !['laptop', 'tablet', 'camera', 'other'].includes(category)) {
         trackEvent('device-search-invalid-category', { category: category || '' });
         return {
@@ -81,7 +71,6 @@ export async function listDevicesHttp(
       };
     }
 
-    // Otherwise, list all devices
     const devices = await listDevices({
       deviceRepo: repo
     });
@@ -125,15 +114,13 @@ app.http('listDevices', {
   authLevel: 'anonymous',
   route: 'devices',
   handler: async (request, context) => {
-    // Handle POST - Add device
+
     if (request.method === 'POST') {
       const { addDeviceHttp } = await import('./add-device-http.js');
       return addDeviceHttp(request, context);
     }
-    // Handle GET and OPTIONS - List devices
+
     return listDevicesHttp(request, context);
   }
 });
-
-
 

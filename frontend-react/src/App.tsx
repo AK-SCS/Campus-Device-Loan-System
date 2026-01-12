@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import './App.css'
 import { useAuth0 } from './auth/useAuth0'
 import { AuthenticationButton } from './auth/AuthButtons'
@@ -58,7 +58,6 @@ function App() {
     emailService: false
   });
 
-  // Debug: Log user roles
   useEffect(() => {
     if (isAuthenticated && user) {
       console.log('=== Current User Info ===');
@@ -70,7 +69,6 @@ function App() {
     }
   }, [isAuthenticated, user, hasRole]);
 
-  // Set default view based on user role
   useEffect(() => {
     if (isAuthenticated) {
       if (hasRole('admin')) {
@@ -83,50 +81,48 @@ function App() {
     }
   }, [isAuthenticated, hasRole]);
 
-  // Load devices on mount
   useEffect(() => {
     loadDevices();
     checkServiceStatus();
     const interval = setInterval(checkServiceStatus, 30000);
     return () => clearInterval(interval);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [categoryFilter, availableOnlyFilter]);
 
-  // Load loans when viewing my loans
   useEffect(() => {
     if (viewMode === 'my-loans' && isAuthenticated) {
       loadMyLoans();
     } else if (viewMode === 'overdue') {
       loadOverdueLoans();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [viewMode, isAuthenticated]);
 
   const loadDevices = async () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       let url = `${API_BASE.deviceCatalogue}/devices`;
       const params = new URLSearchParams();
-      
+
       if (categoryFilter !== 'all') {
         params.append('category', categoryFilter);
       }
       if (availableOnlyFilter) {
         params.append('availableOnly', 'true');
       }
-      
+
       if (params.toString()) {
         url += `?${params.toString()}`;
       }
-      
+
       const response = await fetch(url);
-      
+
       if (!response.ok) {
         throw new Error('Failed to load devices');
       }
-      
+
       const data = await response.json();
       setDevices(data);
     } catch (err) {
@@ -142,11 +138,11 @@ function App() {
       setLoading(true);
       setError(null);
       const response = await fetch(`${API_BASE.loanService}/loans?userId=${encodeURIComponent(user?.email || '')}`);
-      
+
       if (!response.ok) {
         throw new Error('Failed to load loans');
       }
-      
+
       const data = await response.json();
       setLoans(data);
     } catch (err) {
@@ -162,11 +158,11 @@ function App() {
       setLoading(true);
       setError(null);
       const response = await fetch(`${API_BASE.loanService}/overdue-loans`);
-      
+
       if (!response.ok) {
         throw new Error('Failed to load overdue loans');
       }
-      
+
       const data = await response.json();
       setLoans(data);
     } catch (err) {
@@ -191,7 +187,7 @@ function App() {
       });
       newStatus.deviceCatalogue = response.ok;
     } catch {
-      // Service unavailable
+
     }
 
     try {
@@ -201,10 +197,10 @@ function App() {
       });
       newStatus.loanService = response.ok;
     } catch {
-      // Service unavailable
+
     }
 
-    newStatus.emailService = true; // Assume running if others are
+    newStatus.emailService = true; 
 
     setServiceStatus(newStatus);
   };
@@ -216,9 +212,9 @@ function App() {
 
   const handleReservation = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isAuthenticated) {
-      // Redirect to login when trying to reserve without authentication
+
       loginWithRedirect();
       return;
     }
@@ -236,9 +232,9 @@ function App() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const token = await getAccessToken();
-      
+
       const response = await fetch(`${API_BASE.loanService}/loans/reserve`, {
         method: 'POST',
         headers: {
@@ -259,16 +255,15 @@ function App() {
       }
 
       const loan = await response.json();
-      
+
       setSuccessMessage(
         `✅ Reservation successful! Loan ID: ${loan.loanId}. ` +
         `Due date: ${new Date(loan.dueDate).toLocaleDateString()}`
       );
-      
-      // Reload devices to update availability
+
       await loadDevices();
       setSelectedDevice(null);
-      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to reserve device');
       console.error('Reservation error:', err);
@@ -285,7 +280,7 @@ function App() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetch(`${API_BASE.loanService}/loans/${loanId}/cancel`, {
         method: 'POST',
         headers: {
@@ -300,13 +295,12 @@ function App() {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to cancel reservation');
       }
-      
+
       setSuccessMessage('✅ Reservation cancelled successfully. Device returned to inventory.');
-      
-      // Reload loans and devices
+
       await loadMyLoans();
       await loadDevices();
-      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to cancel reservation');
       console.error('Cancel error:', err);
@@ -356,8 +350,8 @@ function App() {
     <>
       <div className="panel catalogue-panel">
         <h2>📱 Available Devices</h2>
-        
-        {/* Filters */}
+
+        {}
         <div className="filters">
           <div className="filter-group">
             <label htmlFor="category-filter">Category:</label>
@@ -373,7 +367,7 @@ function App() {
               <option value="other">🔧 Other</option>
             </select>
           </div>
-          
+
           <div className="filter-group">
             <label>
               <input
@@ -452,7 +446,7 @@ function App() {
             {loading ? 'Processing...' : 'Reserve Device'}
           </button>
 
-          {/* Join Waitlist Button */}
+          {}
           {selectedDevice && selectedDevice.availableCount === 0 && (
             <button
               type="button"
@@ -519,11 +513,11 @@ function App() {
   const renderMyLoansView = () => (
     <div className="panel loans-panel">
       <h2>📋 My Loans</h2>
-      
+
       {error && (
         <div className="error-message">{error}</div>
       )}
-      
+
       {successMessage && (
         <div className="success-message">{successMessage}</div>
       )}
@@ -550,7 +544,7 @@ function App() {
                   {loan.status.toUpperCase()}
                 </span>
               </div>
-              
+
               <div className="loan-details">
                 <p><strong>Loan ID:</strong> {loan.id}</p>
                 <p><strong>Reserved:</strong> {formatDate(loan.reservedAt)}</p>
@@ -582,7 +576,7 @@ function App() {
   const renderOverdueView = () => (
     <div className="panel overdue-panel">
       <h2>⚠️ Overdue Loans</h2>
-      
+
       {error && (
         <div className="error-message">{error}</div>
       )}
@@ -603,7 +597,7 @@ function App() {
                   OVERDUE
                 </span>
               </div>
-              
+
               <div className="loan-details">
                 <p><strong>User:</strong> {loan.userId}</p>
                 <p><strong>Loan ID:</strong> {loan.id}</p>
@@ -621,12 +615,12 @@ function App() {
 
   return (
     <div className="app">
-      {/* Header */}
+      {}
       <header className="header">
         <h1>🎓 Campus Device Loan System</h1>
-        
+
         <nav className="nav-tabs">
-          {/* Device Catalogue - always visible to everyone */}
+          {}
           <button
             className={`nav-tab ${viewMode === 'catalogue' ? 'active' : ''}`}
             onClick={() => setViewMode('catalogue')}
@@ -634,7 +628,7 @@ function App() {
             📱 Devices
           </button>
 
-          {/* Student tabs - only for users with student role */}
+          {}
           {isAuthenticated && hasRole('student') && (
             <>
               <button
@@ -658,7 +652,7 @@ function App() {
             </>
           )}
 
-          {/* Staff Management - visible to staff only */}
+          {}
           {isAuthenticated && hasRole('staff') && (
             <button
               className={`nav-tab ${viewMode === 'staff' ? 'active' : ''}`}
@@ -668,7 +662,7 @@ function App() {
             </button>
           )}
 
-          {/* Admin Dashboard - visible to admin only */}
+          {}
           {isAuthenticated && hasRole('admin') && (
             <button
               className={`nav-tab ${viewMode === 'admin' ? 'active' : ''}`}
@@ -684,7 +678,7 @@ function App() {
         </div>
       </header>
 
-      {/* Main Content */}
+      {}
       <div className="content">
         {viewMode === 'catalogue' && renderCatalogueView()}
         {viewMode === 'my-loans' && renderMyLoansView()}
@@ -694,7 +688,7 @@ function App() {
         {viewMode === 'admin' && <AdminDashboard />}
       </div>
 
-      {/* Footer */}
+      {}
       <footer className="footer">
         <div className="service-status">
           <span>Service Status:</span>

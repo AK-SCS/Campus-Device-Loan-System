@@ -1,10 +1,4 @@
-/**
- * Collect Device HTTP Endpoint
- * 
- * POST /api/loans/{loanId}/collect
- * Marks a reserved loan as collected (staff only in production)
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getCorsHeaders } from '../utils/cors.js';
 import { collectDevice } from '../app/collect-device';
@@ -16,7 +10,6 @@ export async function collectDeviceHttp(
 ): Promise<HttpResponseInit> {
   context.log('HTTP trigger function processing request for collect device');
 
-  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return {
       status: 204,
@@ -25,7 +18,7 @@ export async function collectDeviceHttp(
   }
 
   try {
-    // Get loan ID from route parameters
+
     const loanId = request.params.loanId;
 
     if (!loanId) {
@@ -38,7 +31,6 @@ export async function collectDeviceHttp(
       };
     }
 
-    // Call use case
     await collectDevice(
       {
         loanRepo: getLoanRepo(),
@@ -62,11 +54,9 @@ export async function collectDeviceHttp(
   } catch (error) {
     context.error('Error collecting device:', error);
 
-    // Handle specific business logic errors
     if (error instanceof Error) {
       const errorMessage = error.message;
 
-      // Client errors (400)
       if (
         errorMessage.includes('required') ||
         errorMessage.includes('not found') ||
@@ -83,7 +73,6 @@ export async function collectDeviceHttp(
       }
     }
 
-    // Server errors (500)
     return {
       status: 500,
       headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
@@ -101,6 +90,4 @@ app.http('collectDevice', {
   route: 'loans/{loanId}/collect',
   handler: collectDeviceHttp
 });
-
-
 

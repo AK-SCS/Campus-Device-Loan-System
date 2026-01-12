@@ -1,8 +1,4 @@
-/**
- * Readiness Check HTTP Endpoint
- * Returns whether the service and its dependencies are ready to handle requests
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 
 export async function readinessCheck(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
@@ -10,11 +6,9 @@ export async function readinessCheck(request: HttpRequest, context: InvocationCo
 
   const checks: { [key: string]: boolean } = {
     service: true,
-    sendGrid: true // Assume SendGrid is ready (we'd need API call to verify)
+    sendGrid: true 
   };
 
-  // For email service, we could check SendGrid API status
-  // For now, basic check that service is running
   const allReady = Object.values(checks).every(status => status === true);
 
   const readiness = {

@@ -1,13 +1,9 @@
-import { Device } from '../domain/device';
+﻿import { Device } from '../domain/device';
 import { DeviceRepo } from '../domain/device-repo';
 
-/**
- * In-memory implementation of DeviceRepo for local development.
- * Contains sample devices across different categories.
- */
 export class FakeDeviceRepo implements DeviceRepo {
   private devices: Device[] = [
-    // Laptops
+
     {
       id: '1',
       brand: 'Dell',
@@ -40,7 +36,7 @@ export class FakeDeviceRepo implements DeviceRepo {
       totalCount: 4,
       availableCount: 0
     },
-    // Tablets
+
     {
       id: '5',
       brand: 'Apple',
@@ -65,7 +61,7 @@ export class FakeDeviceRepo implements DeviceRepo {
       totalCount: 5,
       availableCount: 5
     },
-    // Cameras
+
     {
       id: '8',
       brand: 'Canon',
@@ -90,7 +86,7 @@ export class FakeDeviceRepo implements DeviceRepo {
       totalCount: 2,
       availableCount: 0
     },
-    // Other devices
+
     {
       id: '11',
       brand: 'GoPro',
@@ -110,7 +106,7 @@ export class FakeDeviceRepo implements DeviceRepo {
   ];
 
   async list(): Promise<Device[]> {
-    // Return a copy to prevent external modifications
+
     return [...this.devices];
   }
 
@@ -121,13 +117,13 @@ export class FakeDeviceRepo implements DeviceRepo {
 
   async save(device: Device): Promise<Device> {
     const index = this.devices.findIndex(d => d.id === device.id);
-    
+
     if (index >= 0) {
-      // Update existing device
+
       this.devices[index] = { ...device };
       return { ...device };
     } else {
-      // Add new device
+
       const newDevice = { ...device };
       this.devices.push(newDevice);
       return newDevice;
@@ -141,9 +137,6 @@ export class FakeDeviceRepo implements DeviceRepo {
     }
   }
 
-  /**
-   * Helper method for testing - resets to initial state
-   */
   reset(): void {
     this.devices = [
       {

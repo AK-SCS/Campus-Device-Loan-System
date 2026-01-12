@@ -1,8 +1,4 @@
-/**
- * Azure Function: Search Devices (HTTP)
- * GET /api/devices/search?category=laptop&availableOnly=true
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getCorsHeaders } from '../utils/cors.js';
 import { searchDevices } from '../app/search-devices.js';
@@ -15,14 +11,13 @@ export async function searchDevicesHttp(
   context.log('HTTP trigger: Search devices');
 
   try {
-    // Get query parameters
+
     const category = request.query.get('category') as 'laptop' | 'tablet' | 'camera' | 'other' | null;
     const availableOnly = request.query.get('availableOnly') === 'true';
     const minAvailability = request.query.get('minAvailability') 
       ? parseInt(request.query.get('minAvailability')!, 10) 
       : undefined;
 
-    // Validate category if provided
     if (category && !['laptop', 'tablet', 'camera', 'other'].includes(category)) {
       return {
         status: 400,
@@ -32,10 +27,8 @@ export async function searchDevicesHttp(
       };
     }
 
-    // Get repository
     const repo = getDeviceRepo();
 
-    // Search devices
     const devices = await searchDevices(repo, {
       category,
       availableOnly,
@@ -67,6 +60,4 @@ app.http('searchDevices', {
   route: 'devices/search',
   handler: searchDevicesHttp
 });
-
-
 

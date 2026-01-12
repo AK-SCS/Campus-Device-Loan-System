@@ -1,21 +1,9 @@
-/**
- * Email Notification Domain Layer
- * 
- * Pure functions for generating email content based on loan events.
- * Each template function returns an object with subject and body text.
- */
-
-/**
- * Email content structure
- */
+﻿
 export interface EmailContent {
   subject: string;
   body: string;
 }
 
-/**
- * Data required for reservation confirmation email
- */
 export interface ReservationData {
   loanId: string;
   userId: string;
@@ -25,9 +13,6 @@ export interface ReservationData {
   dueDate: Date;
 }
 
-/**
- * Data required for collection confirmation email
- */
 export interface CollectionData {
   loanId: string;
   userId: string;
@@ -36,9 +21,6 @@ export interface CollectionData {
   dueDate: Date;
 }
 
-/**
- * Data required for return confirmation email
- */
 export interface ReturnData {
   loanId: string;
   userId: string;
@@ -46,18 +28,12 @@ export interface ReturnData {
   returnedAt: Date;
 }
 
-/**
- * Data required for device available notification
- */
 export interface DeviceAvailableData {
   deviceId: string;
   deviceModel: string;
   userId: string;
 }
 
-/**
- * Data required for cancellation confirmation email
- */
 export interface CancellationData {
   loanId: string;
   userId: string;
@@ -65,9 +41,6 @@ export interface CancellationData {
   cancelledAt: Date;
 }
 
-/**
- * Data required for overdue reminder email
- */
 export interface OverdueReminderData {
   loanId: string;
   userId: string;
@@ -76,9 +49,6 @@ export interface OverdueReminderData {
   daysOverdue: number;
 }
 
-/**
- * Format a date to a readable string
- */
 function formatDate(date: Date): string {
   return new Date(date).toLocaleString('en-GB', {
     weekday: 'long',
@@ -90,12 +60,9 @@ function formatDate(date: Date): string {
   });
 }
 
-/**
- * Generate email content for device reservation confirmation
- */
 export function reservationConfirmation(data: ReservationData): EmailContent {
   const subject = `Device Reserved: ${data.deviceModel}`;
-  
+
   const body = `Hello,
 
 Your device reservation has been confirmed!
@@ -127,12 +94,9 @@ Campus Device Loan System
   return { subject, body };
 }
 
-/**
- * Generate email content for device collection confirmation
- */
 export function collectionConfirmation(data: CollectionData): EmailContent {
   const subject = `Device Collected: ${data.deviceModel}`;
-  
+
   const body = `Hello,
 
 Your device has been successfully collected!
@@ -165,12 +129,9 @@ Campus Device Loan System
   return { subject, body };
 }
 
-/**
- * Generate email content for device return confirmation
- */
 export function returnConfirmation(data: ReturnData): EmailContent {
   const subject = `Device Returned: ${data.deviceModel}`;
-  
+
   const body = `Hello,
 
 Thank you for returning your device!
@@ -196,12 +157,9 @@ Campus Device Loan System
   return { subject, body };
 }
 
-/**
- * Generate email content for device availability notification
- */
 export function deviceAvailableNotification(data: DeviceAvailableData): EmailContent {
   const subject = `Device Now Available: ${data.deviceModel}`;
-  
+
   const body = `Hello,
 
 Good news! A device you may be interested in is now available.
@@ -225,12 +183,9 @@ Campus Device Loan System
   return { subject, body };
 }
 
-/**
- * Generate email content for reservation cancellation confirmation
- */
 export function cancellationConfirmation(data: CancellationData): EmailContent {
   const subject = `Reservation Cancelled: ${data.deviceModel}`;
-  
+
   const body = `Hello,
 
 Your device reservation has been cancelled.
@@ -257,12 +212,9 @@ Campus Device Loan System
   return { subject, body };
 }
 
-/**
- * Generate email content for overdue loan reminder
- */
 export function overdueReminder(data: OverdueReminderData): EmailContent {
   const subject = `⚠️ URGENT: Device Overdue - ${data.deviceModel}`;
-  
+
   const body = `Hello,
 
 ⚠️ URGENT NOTICE: Your borrowed device is overdue!
@@ -299,17 +251,14 @@ Campus Device Loan System
   return { subject, body };
 }
 
-/**
- * Validate email content
- */
 export function validateEmailContent(content: EmailContent): boolean {
   if (!content.subject || content.subject.trim().length === 0) {
     return false;
   }
-  
+
   if (!content.body || content.body.trim().length === 0) {
     return false;
   }
-  
+
   return true;
 }

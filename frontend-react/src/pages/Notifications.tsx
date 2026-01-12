@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useAuth0 } from '../auth/useAuth0';
 
 interface Notification {
@@ -28,7 +28,7 @@ export default function Notifications() {
   useEffect(() => {
     if (user?.email) {
       fetchNotifications();
-      const interval = setInterval(fetchNotifications, 30000); // Refresh every 30 seconds
+      const interval = setInterval(fetchNotifications, 30000); 
       return () => clearInterval(interval);
     }
   }, [user]);
@@ -62,7 +62,7 @@ export default function Notifications() {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      // Update local state
+
       setNotifications(prev => prev.map(n => 
         n.id === notificationId ? { ...n, read: true } : n
       ));
@@ -84,12 +84,12 @@ export default function Notifications() {
 
   const getTypeColor = (type: Notification['type']) => {
     switch (type) {
-      case 'device.collected': return '#3b82f6'; // blue
-      case 'device.returned': return '#10b981'; // green
-      case 'device.available': return '#f59e0b'; // amber
-      case 'device.reserved': return '#8b5cf6'; // purple
-      case 'device.cancelled': return '#ef4444'; // red
-      default: return '#6b7280'; // gray
+      case 'device.collected': return '#3b82f6'; 
+      case 'device.returned': return '#10b981'; 
+      case 'device.available': return '#f59e0b'; 
+      case 'device.reserved': return '#8b5cf6'; 
+      case 'device.cancelled': return '#ef4444'; 
+      default: return '#6b7280'; 
     }
   };
 

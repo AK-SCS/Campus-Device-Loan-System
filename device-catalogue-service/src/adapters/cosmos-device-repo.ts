@@ -1,4 +1,4 @@
-import { CosmosClient, Container } from "@azure/cosmos";
+﻿import { CosmosClient, Container } from "@azure/cosmos";
 import { DeviceRepo } from "../domain/device-repo.js";
 import { Device } from "../domain/device.js";
 
@@ -13,18 +13,17 @@ export class CosmosDeviceRepo implements DeviceRepo {
 
   async save(device: Device): Promise<Device> {
     try {
-      // In Cosmos DB, we use the device as both the document and provide the id
+
       const { resource } = await this.container.items.upsert({
         id: device.id,
         ...device,
-        _type: "device" // Add type identifier for multi-document containers
+        _type: "device" 
       });
-      
+
       if (!resource) {
         throw new Error("Failed to save device to Cosmos DB");
       }
 
-      // Remove Cosmos DB metadata and return clean device object
       const { _rid, _self, _etag, _attachments, _ts, _type, ...cleanDevice } = resource;
       return cleanDevice as Device;
     } catch (error) {
@@ -109,7 +108,7 @@ export class CosmosDeviceRepo implements DeviceRepo {
   async getById(id: string): Promise<Device | null> {
     try {
       const { resource } = await this.container.item(id, id).read();
-      
+
       if (!resource || resource._type !== "device") {
         return null;
       }
@@ -129,7 +128,7 @@ export class CosmosDeviceRepo implements DeviceRepo {
       await this.container.item(id, id).delete();
     } catch (error: any) {
       if (error.code === 404) {
-        // Device doesn't exist, which is fine for delete
+
         return;
       }
       console.error("Error deleting device from Cosmos DB:", error);

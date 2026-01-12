@@ -1,10 +1,4 @@
-/**
- * Reserve Device HTTP Endpoint
- * 
- * POST /api/loans/reserve
- * Request body: { userId: string, deviceId: string }
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getCorsHeaders } from '../utils/cors.js';
 import { reserveDevice } from '../app/reserve-device';
@@ -19,7 +13,6 @@ export async function reserveDeviceHttp(
   const startTime = Date.now();
   context.log('HTTP trigger function processing request for reserve device');
 
-  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return {
       status: 200,
@@ -27,7 +20,6 @@ export async function reserveDeviceHttp(
     };
   }
 
-  // Check authentication
   const authError = requireAuth(request, context);
   if (authError) {
     return {
@@ -37,7 +29,6 @@ export async function reserveDeviceHttp(
     };
   }
 
-  // Validate token
   let decodedToken;
   try {
     decodedToken = await validateToken(request, context);
@@ -61,9 +52,9 @@ export async function reserveDeviceHttp(
   }
 
   try {
-    // Parse request body
+
     const body = await request.json() as any;
-    
+
     if (!body) {
       return {
         status: 400,
@@ -76,7 +67,6 @@ export async function reserveDeviceHttp(
 
     const { userId, deviceId } = body;
 
-    // Validate required fields
     if (!userId || !deviceId) {
       return {
         status: 400,
@@ -87,7 +77,6 @@ export async function reserveDeviceHttp(
       };
     }
 
-    // Call use case
     const result = await reserveDevice(
       {
         loanRepo: getLoanRepo(),
@@ -98,15 +87,14 @@ export async function reserveDeviceHttp(
     );
 
     const duration = Date.now() - startTime;
-    
-    // Track successful reservation
+
     trackEvent('DeviceReservationSuccess', {
       userId,
       deviceId,
       loanId: result.loanId,
       duration: duration.toString()
     });
-    
+
     trackMetric('ReservationDuration', duration, { 
       operation: 'reserve',
       status: 'success'
@@ -122,13 +110,12 @@ export async function reserveDeviceHttp(
 
   } catch (error) {
     const duration = Date.now() - startTime;
-    
-    // Track failed reservation
+
     trackEvent('DeviceReservationFailure', {
       error: error instanceof Error ? error.message : 'Unknown error',
       duration: duration.toString()
     });
-    
+
     trackMetric('ReservationDuration', duration, { 
       operation: 'reserve',
       status: 'failure'
@@ -136,11 +123,9 @@ export async function reserveDeviceHttp(
 
     context.error('Error reserving device:', error);
 
-    // Handle specific business logic errors
     if (error instanceof Error) {
       const errorMessage = error.message;
 
-      // Client errors (400)
       if (
         errorMessage.includes('required') ||
         errorMessage.includes('not found') ||
@@ -157,7 +142,6 @@ export async function reserveDeviceHttp(
       }
     }
 
-    // Server errors (500)
     return {
       status: 500,
       headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
@@ -175,6 +159,4 @@ app.http('reserveDevice', {
   route: 'loans/reserve',
   handler: reserveDeviceHttp
 });
-
-
 

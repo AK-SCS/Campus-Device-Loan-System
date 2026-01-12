@@ -1,8 +1,4 @@
-/**
- * Device Domain Tests
- * Testing pure domain logic - no external dependencies
- */
-
+﻿
 import { describe, it, expect } from 'vitest';
 import { createDevice, updateAvailability, isAvailable, Device } from './device';
 

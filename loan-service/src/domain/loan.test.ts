@@ -1,8 +1,4 @@
-/**
- * Loan Domain Tests
- * Testing loan lifecycle, 2-day period, status transitions
- */
-
+﻿
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import {
   createLoan,
@@ -20,7 +16,7 @@ describe('Loan Domain', () => {
       const reservedAt = new Date('2026-01-04T10:00:00Z');
       const dueDate = calculateDueDate(reservedAt);
 
-      expect(dueDate.getDate()).toBe(6); // 4 + 2 = 6
+      expect(dueDate.getDate()).toBe(6); 
       expect(dueDate.getHours()).toBe(reservedAt.getHours());
     });
 
@@ -28,8 +24,8 @@ describe('Loan Domain', () => {
       const reservedAt = new Date('2026-01-30T10:00:00Z');
       const dueDate = calculateDueDate(reservedAt);
 
-      expect(dueDate.getMonth()).toBe(1); // February (month index 1)
-      expect(dueDate.getDate()).toBe(1); // Feb 1st
+      expect(dueDate.getMonth()).toBe(1); 
+      expect(dueDate.getDate()).toBe(1); 
     });
 
     it('should handle year boundaries', () => {
@@ -37,8 +33,8 @@ describe('Loan Domain', () => {
       const dueDate = calculateDueDate(reservedAt);
 
       expect(dueDate.getFullYear()).toBe(2026);
-      expect(dueDate.getMonth()).toBe(0); // January
-      expect(dueDate.getDate()).toBe(1); // Jan 1st
+      expect(dueDate.getMonth()).toBe(0); 
+      expect(dueDate.getDate()).toBe(1); 
     });
   });
 

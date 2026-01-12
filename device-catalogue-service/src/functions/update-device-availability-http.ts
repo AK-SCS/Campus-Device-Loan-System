@@ -1,9 +1,4 @@
-/**
- * Update Device Availability HTTP Function
- * POST /api/devices/{id}/update-availability
- * Updates the available count for a device by querying active loans
- */
-
+﻿
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { getDeviceRepo } from '../config/appServices.js';
 import { getCorsHeaders } from '../utils/cors.js';
@@ -16,7 +11,6 @@ export async function updateDeviceAvailability(
   const startTime = Date.now();
   context.log('Updating device availability');
 
-  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return {
       status: 200,
@@ -56,13 +50,11 @@ export async function updateDeviceAvailability(
       };
     }
 
-    // Get the count to decrement from request body
     const body = await request.json() as any;
     const decrementBy = body?.decrementBy || 1;
 
-    // Update available count
     const newAvailableCount = Math.max(0, device.availableCount - decrementBy);
-    
+
     const updatedDevice = {
       ...device,
       availableCount: newAvailableCount
@@ -71,8 +63,7 @@ export async function updateDeviceAvailability(
     await repo.save(updatedDevice);
 
     const duration = Date.now() - startTime;
-    
-    // Track successful availability update
+
     trackEvent('DeviceAvailabilityUpdated', {
       deviceId,
       previousCount: device.availableCount.toString(),
@@ -80,7 +71,7 @@ export async function updateDeviceAvailability(
       decrementBy: decrementBy.toString(),
       duration: duration.toString()
     });
-    
+
     trackMetric('AvailabilityUpdateDuration', duration, { 
       operation: 'updateAvailability',
       status: 'success'
@@ -99,13 +90,12 @@ export async function updateDeviceAvailability(
 
   } catch (error: any) {
     const duration = Date.now() - startTime;
-    
-    // Track failed availability update
+
     trackEvent('DeviceAvailabilityUpdateFailure', {
       error: error instanceof Error ? error.message : 'Unknown error',
       duration: duration.toString()
     });
-    
+
     trackMetric('AvailabilityUpdateDuration', duration, { 
       operation: 'updateAvailability',
       status: 'failure'
